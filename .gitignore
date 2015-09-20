@@ -1,5 +1,5 @@
 *.lock
 *.pdf
 *.html
-!slides*.html
+**/slides.html
 .idea

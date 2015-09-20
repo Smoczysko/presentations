@@ -1,0 +1,134 @@
+= Presentation title: Presentation subtitle
+Łukasz Rybka ; Poland 2015
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+
+== !
+====
+[quote, Vince Lombardi]
+____
+It's not whether you get knocked down; it's whether you get back up.
+____
+====
+
+[.topic]
+== Normal text
+
+Duis mattis pellentesque lectus et molestie. In non lacus nec libero pharetra fermentum. Fusce quis metus nisi. Sed pretium commodo nisi vel convallis. Mauris orci justo, pharetra ullamcorper tortor a, iaculis condimentum eros. Proin vehicula turpis et nisl dignissim pellentesque. Donec aliquet felis id efficitur venenatis.
+
+[.topic]
+== Image
+image::06-jee7-deep-dive.png[JEE7, 600, role="middle"]
+
+[.topic]
+== Lists
+
+* List item 1
+* List item 2
+* List item 3
+* List item 4
+* List item 5
+
+[.topic]
+== Lists incremental
+
+[.incremental]
+* List item 1
+* List item 2
+* List item 3
+* List item 4
+* List item 5
+
+[.topic.source]
+== XML source
+
+[source,xml]
+----
+<subsystem xmlns="urn:jboss:domain:messaging:1.1">
+  <hornetq-server>
+     <jms-destinations>
+        <jms-queue name="testQueue">
+            <entry name="queue/test"/>
+        </jms-queue>
+        <jms-topic name="testTopic">
+            <entry name="topic/test"/>
+        </jms-topic>
+     </jms-destinations>
+  </hornetq-server>
+</subsystem>
+----
+
+[.topic.source]
+== Java source
+
+[source,java]
+----
+
+@JMSConnectionFactoryDefinition( <1>
+  name = "java:global/jms/demoConnectionFactory",
+  className = "javax.jms.ConnectionFactory")
+@JMSDestinationDefinition( <2>
+  name = "java:global/jms/demoQueue",
+  interfaceName = "javax.jms.Queue",
+  destinationName = "demoQueue")
+public class JmsConfiguration {
+
+}
+----
+<1> First code comment
+<2> Second code comment
+
+
+[.topic.source]
+== Multiple code blocks
+
+[source,java]
+.+UserSex.java+
+----
+public enum UseSex {
+  MALE, FEMALE;
+}
+----
+
+[source,java]
+.+User.java+
+----
+@Entity
+public class User {
+
+  @Id
+  private long id;
+
+  @Enumerated(EnumType.ORDINAL) <1>
+  private UserSex sex;
+
+  //..
+}
+----
+<1> Actual database value is either `0` or `1`
+
+== Paragraphs
+
+Job Repository:: holds information about jobs current running and jobs that run in the past. JobOperator provides access to this repository.
+Job Operator:: an interface to manage all aspects of job processing, including operational commands, such as start, restart, and stop, retrieval of job and step executions.
+Job:: encapsulates an entire batch process
+
+== Paragraphs incremental
+
+[.incremental]
+Job Repository:: holds information about jobs current running and jobs that run in the past. JobOperator provides access to this repository.
+Job Operator:: an interface to manage all aspects of job processing, including operational commands, such as start, restart, and stop, retrieval of job and step executions.
+Job:: encapsulates an entire batch process
