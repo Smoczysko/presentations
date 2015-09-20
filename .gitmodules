@@ -1,0 +1,6 @@
+[submodule "asciidoctor-backends"]
+	path = asciidoctor-backends
+    url = git@github.com:asciidoctor/asciidoctor-backends.git
+[submodule "deck2pdf"]
+	path = deck2pdf
+	url = https://github.com/melix/deck2pdf
