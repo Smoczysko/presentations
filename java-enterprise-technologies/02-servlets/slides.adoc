@@ -1,0 +1,377 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Technologie Java Enterprise Servlets
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== O mnie
+
+[.incremental]
+Z wykształcenia:: fizyk
+Z zawodu:: projektant-programista / kontrybutor Open Source / freelancer
+Z zamiłowania:: wykładowca / prelegent / szkoleniowiec
+
+[.topic]
+== Wykład - materiały
+
+*Slajdy:*
+
+icon:github[] http://smoczysko.github.io/lectures/jet
+
+*Bazowa aplikacja:*
+
+icon:github[] https://github.com/Smoczysko/introduction-to-jee-ug
+
+*Przykłady z wykładów (i nie tylko):*
+
+icon:github[] https://github.com/Smoczysko/introduction-to-jee-examples
+
+[.topic]
+== Ustalenia
+[.incremental]
+* Pytania mile widziane!
+* Konsultacje po zajęciach - informacja odpowiednio przed (np. mailowo)
+* Wykład nie jest obowiązkowy...
+
+[.topic]
+== Dlaczego warto?
+
+image::why-01.png[Ogłoszenie o pracę, 600, role="middle"]
+
+[.topic]
+== Dlaczego warto?
+
+image::why-02.png[Ogłoszenie o pracę, 600, role="middle"]
+
+[.topic]
+== Podstawowa struktura projektu
+
+image::basic-project-structure.png[Podstawowa struktura projektu, 450, role="middle"]
+
+[.topic.source]
+== Deskryptor aplikacji (web.xml)
+
+[source,xml]
+----
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+    <display-name>Introduction to JEE</display-name>
+    <description>Some description</description>
+
+    <servlet>
+        <servlet-name>HelloServlet</servlet-name>
+        <servlet-class>pl.edu.ug.introductiontojee.web.HelloServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HelloServlet</servlet-name>
+        <url-pattern>/hello</url-pattern>
+    </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+</web-app>
+----
+
+[.topic.source]
+== Budowa servletu
+
+[source,java]
+----
+@WebServlet(urlPatterns = "/hello")<1>
+public class HelloServlet extends HttpServlet {<2>
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+
+        PrintWriter writer = response.getWriter();
+        writer.println("<html><body><h2>Hello!</h2></body></html>");
+        writer.close();
+    }
+}
+----
+<1> Zastępuje servlet-mapping w web.xml
+<2> Każdy servlet musi rozszerzać klasę javax.servlet.http.HttpServlet
+
+[.topic.source]
+== Uruchomienie aplikacji
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.mortbay.jetty</groupId>
+    <artifactId>jetty-maven-plugin</artifactId>
+    <version>8.0.3.v20111011</version>
+    <configuration>
+        <scanIntervalSeconds>3</scanIntervalSeconds><2>
+        <webAppConfig>
+            <contextPath>/helloapp</contextPath><1>
+        </webAppConfig>
+    </configuration>
+</plugin>
+----
+<1> Ustalamy ścieżkę *względną* do naszej aplikacji
+<2> Wskazujemy co ile sekund Jetty ma sprawdzać czy zaszły zmiany i przeładowywać aplikację
+
+{nbsp} +
+
+[source,xml]
+----
+mvn jetty:run
+----
+
+[.topic]
+== Servlet URL
+
+[.text-center]
+scheme://domain(:port)/path(?query_string)(#fragment_id)
+
+[.text-center]
+http://localhost:8080/helloapp/hello
+
+[.topic]
+== HyperText Transfer Protocol (HTTP) methods
+
+[.incremental]
+* *GET* - prosi o reprezentację danego zasobu
+* *HEAD* - prosi o metainformacje (nagłówki) zasobu
+* *POST* - dodaje nowy zasób podrzędnie do wskazanego przez URI
+* *PUT* - aktualizacja zasobu
+* *DELETE* - usunięcie zasobu
+
+[.topic]
+== HyperText Transfer Protocol (HTTP) methods
+
+[.incremental]
+* *TRACE* - zwraca żadanie klienta (efekt echo)
+* *OPTIONS* - lista metod HTTP wspierana dla wskazanego zasobu
+* *CONNECT* - przekształca zapytanie w tunel TCP/IP (np. szyfrowana komunikacja szyfrowanej (SSL) przez nieszyfrowane proxy HTTP)
+* *PATCH* - modyfikuje jedynie fragment zasobu
+
+[.topic]
+== Obsługa formularza - GET
+
+[.incremental]
+* Formularz wysłany metodą GET wszystkie pola przesyła za pomocą parametrów zapytania
+* Brak mapowania typów pól formularza na typy Javowe
+* NPE - konieczne jest ręczne sprawdzenie, czy dany parametr został przesłany
+
+[.topic.source]
+== Obsługa formularza - GET
+
+[source,java]
+----
+@WebServlet(urlPatterns = "/hello")
+public class HelloServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+
+        String name = req.getParameter("name");<1>
+
+        String[] hobbies = req.getParameterValues("hobbies");<2>
+
+        boolean isUnderage = req.getParameter("underage") != null;<3>
+
+        String comment = req.getParametr("comment");<4>
+    }
+}
+----
+<1> Pobranie ostatniej *(!)* wartości parametru (wartość ostatniego pola o zadanej nazwie w HTML'u)
+<2> Pobranie wszystkich wartości parametru o zadanej nazwie
+<3> Pole <input> o typie "checkbox", które nie jest zaznaczone nie będzie przesłane w formularzu
+<4> Pole <textarea> przesyłane jest w zapytaniu jako zwykły String
+
+[.topic]
+== Obsługa formularza - POST
+
+[.incremental]
+* Dane z formularza przesyłane są w ciele zapytania HTTP
+* "Brak" ograniczenia wielkości danych przesyłanych - w niektórych przeglądarkach długość URL jest limitowana
+* Dostęp do danych z poziomu servletu identyczny jak przy metodzie GET
+
+[.topic]
+== HTTP Session
+
+[.incremental]
+* Zbiór informacji o komunikacji użytkownika (przeglądarki) z serwerem
+* Dostępna (i modyfikowalna) z poziomu servletu
+* Istnieje możliwość nasłuchiwania na zdarzenia utworzenia i zniszczenia sesji
+* Może wygasnąć lub zostać usunięta (np. wyczyszczenie cookies przeglądarki)
+
+[.topic.source]
+== HTTP Session
+
+[source,java]
+----
+@WebServlet(urlPatterns = "/hello")
+public class HelloServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+
+        HttpSession session = request.getSession();<1>
+
+        Object counter = session.getAttribute("counter");<2>
+        session.setAttribute("counter", counter);<3>
+
+        int creationTime = session.getCreationTime();>4>
+        int lastAccessedTime = session.getLastAccessedTime();<4>
+    }
+}
+----
+<1> Pobranie obiektu sesji
+<2> Pobranie obiektu (serializowalnego) z sesji
+<3> Zapisanie (lub usunięcie i zapisanie *!*) obiektu do sesji
+<4> Pobranie metainformacji o sesji
+
+[.topic]
+== HTTP Session listeners
+
+[.incremental]
+* Możliwość nasłuchiwania na utworzenie i usunięcie obiektu sesji
+* Nasłuchiwanie na zdarzenia (un)bound obiektu w sesji
+* Nasłuchiwanie na dodanie, usunięcie i zmianę dowolnego obiektu (atrybutu) w sesji
+
+[.topic.source]
+== HTTPSessionListener
+
+[source,java]
+----
+@WebListener
+public class RequestSessionListener implements HttpSessionListener {
+    @Override
+    public void sessionCreated(HttpSessionEvent event) {
+
+    }
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent event) {
+
+    }
+}
+----
+
+[.topic.source]
+== HttpSessionBindingListener
+
+[source,java]
+----
+public class Counter implements HttpSessionBindingListener {
+    // Standard POJO definition
+
+    @Override
+    public void valueBound(HttpSessionBindingEvent event) {
+
+    }
+
+    @Override
+    public void valueUnbound(HttpSessionBindingEvent event) {
+
+    }
+}
+----
+
+[.topic.source]
+== HttpSessionAttributeListener
+
+[source,java]
+----
+@WebListener
+public class CounterSessionAttributeListener implements HttpSessionAttributeListener {
+    @Override
+    public void attributeAdded(HttpSessionBindingEvent event) {
+        if (event.getValue() instanceof Counter) {<1>
+
+        }
+    }
+
+    @Override
+    public void attributeRemoved(HttpSessionBindingEvent event) {
+        if (event.getName().equals("counter")) {<2>
+
+        }
+    }
+
+    @Override
+    public void attributeReplaced(HttpSessionBindingEvent event) {
+        if (event.getValue() instanceof Counter) {<1>
+
+        }
+    }
+}
+----
+
+[.topic]
+== Servlet Context
+
+[.incremental]
+* Zawiera zbiór informacja i metod używanych do komunikacji między servletem a kontenerem
+* Informacje zapisane w kontekście są dzielone między zapytaniami i sesjami
+* API analogiczne do tego w sesji zapytania
+
+[.text-center]
+link:http://jee-context-example.herokuapp.com[http://jee-context-example.herokuapp.com icon:external-link[], window="_blank"]
+
+[.topic.source]
+== Servlet Context
+
+[source,java]
+----
+@WebServlet(urlPatterns = "/hello")
+public class HelloServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+
+        ServletContext servletContext = getServletContext();
+
+        Object counter = servletContext.getAttribute("counter");<2>
+        servletContext.setAttribute("counter", counter);<3>
+
+        String contextPath = servletContext.getContextPath();>4>
+        String serverInfo = servletContext.getServerInfo();<4>
+    }
+}
+----
+<1> Pobranie obiektu kontekstu
+<2> Pobranie obiektu (serializowalnego) z kontekstu
+<3> Zapisanie (lub usunięcie i zapisanie *!*) obiektu do kontekstu
+<4> Pobranie metainformacji o kontekście, servlecie i samym serwerze
+
+[.topic.source]
+== ServletContextListener
+
+[source,java]
+----
+@WebListener
+public class CounterServletContextListener implements ServletContextListener {
+    @Override
+    public void contextInitialized(ServletContextEvent event) {
+
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent event) {
+
+    }
+}
+----
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]

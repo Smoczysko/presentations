@@ -15,6 +15,7 @@
 :idprefix:
 :idseparator: -
 :icons: font
+:linkattrs:
 
 == !
 ====
