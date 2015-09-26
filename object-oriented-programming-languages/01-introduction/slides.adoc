@@ -1,0 +1,273 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Obiektowe Języki Programowania Wprowadzenie
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== O mnie
+
+[.incremental]
+Z wykształcenia:: fizyk
+Z zawodu:: projektant-programista / kontrybutor Open Source / freelancer
+Z zamiłowania:: wykładowca / prelegent / szkoleniowiec
+
+[.topic]
+== Wykład - materiały
+
+*Literatura:*
+[.incremental]
+* Bentrand Meyer "Programowanie zorientowane obiektowo"
+* Bruce Eckel "Thinking in Java"
+* Katy Sierra, Bert Bates "OCA/OCP Java SE 7 Programmer I & II Study Guide"
+
+[.text-center]
+icon:github[] http://smoczysko.github.io/lectures/oopl
+
+[.topic]
+== Ustalenia
+[.incremental]
+* Pytania mile widziane!
+* Konsultacje po zajęciach - informacja odpowiednio przed (np. mailowo)
+* Slajdy to tak naprawdę ściągawka dla wykładowcy ;)
+* Wykład nie jest obowiązkowy...
+
+[.topic]
+== Organizacja zajęć
+
+[.incremental]
+* Wykład: 7 spotkań po 2h (14h)
+* Laboratoria: 15 spotkań po 4h tygodniowo (60h)
+* Egzamin: ostatni "poniedziałek" semestru o godzinie 16:00 w sali 221 GG
+
+[.topic]
+== Zaliczenie laboratoriów
+
+[.incremental]
+* 6 mini-kolokwiów w trakcie laboratoriów (każde za 5pkt)
+* 1 projekt za 30 pkt
+* wymagane zdobycie przynajmniej 31 pkt
+
+[.topic]
+== Zaliczenie przedmiotu
+
+[.incremental]
+* zaliczenie laboratoriów (31/60 pkt) jest wymogiem podejścia do egzaminu
+* egzamin w formie ustnej za 20 pkt
+* zdobycie powyżej 50 punktów upoważnia do zwolnienia z egzaminu – z oceną 3+
+
+
+[.topic]
+== Przelicznik puntky -> ocena końcowa
+
+* 00 – 40 pkt – niedostateczny
+* 41 – 50 pkt – dostateczny
+* 51 – 60 pkt – dostateczny plus
+* 61 – 70 pkt – dobry
+* 71 – 75 pkt – dobry plus
+* 76 – 80 pkt – bardzo dobry
+
+[.topic]
+== Zakres wykładów
+
+[.incremental]
+* wprowadzenie do ekosystemu Java/JVM
+* klasy i obiekty
+* dziedziczenie
+* polimorfizm
+* kolekcje
+* obsługa wyjątków
+
+[.topic]
+== O czym nie będziemy mówić
+
+[.incremental]
+* mechanizmy analogiczne do innych języków (jak np. operacje bitowe)
+* zarządzanie pamięcią (Garbage Collector) - w szczegółach
+* instrukcje sterujące, pętle itp.
+* ...
+
+[.topic]
+== Czego będziemy używać?
+
+[.incremental]
+* Java Standard Edition Development Kit (Java SE JDK) - 8u60
+* Eclipse IDE for Java Developers
+* Konsola + edytor tekstowy
+
+[.topic]
+== Po co to wszystko?
+
+image::tiobe-rating-2015.png[Ranking TIOBE 2015, 700, role="middle"]
+
+[.topic]
+== Co to jest JVM?
+
+[.incremental]
+Java Virtual Machine:: środowisko uruchomieniowe
+Java bytecode:: wiele języków kompilowanych do jednego kodu "maszynowego"
+Garbage Collector:: zarządzanie pamięcią
+
+[.topic]
+== JVM languages
+
+image::jvm-languages.png[Ranking TIOBE 2015, 650, role="middle"]
+
+[.topic.source]
+== Najprostszy program Java (Main.java)
+
+[source,java]
+----
+public class Main {<1>
+
+    public static void main(String[] args) {<2>
+
+        System.out.println("Hello World!");<3>
+
+    }
+}
+----
+<1> Definicja głównej (i jedynej) klasy w aplikacji
+<2> Definicja metody main, do której zostanie przekazane sterowanie aplikacją przy jej uruchomieniu
+<3> Instrukcja wyświetlenia na standardowe wyjście systemowe (konsolę) napisu
+
+{nbsp} +
+
+[source,xml]
+----
+javac Main.java<1>
+
+java Main<2>
+----
+<1> Kompilacja klasy (plik .java) do bytecode (plik .class)
+<2> Uruchomienie skompilowanej klasy (programu)
+
+[.topic.source]
+== Bytecode
+
+[source,java]
+----
+Compiled from "Main.java"<1>
+public class Main {
+  public Main();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+       3: ldc           #3                  // String Hello World!
+       5: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+       8: return
+}
+----
+<1> javap -c Main
+
+[.topic]
+== Kilka podstawowych informacji
+
+[.incremental]
+* Plik ma tę samą nazwę co klasa
+* Uruchamiamy program przez uruchomienie klasy z funkcją main(String[] args)
+* Pakiety - "nie wszystko w jednym worku"!
+* Dokumentujemy kod w kodzie (javadoc)
+* Podział programu na klasy według (ich) odpowiedzialności
+
+
+[.topic.source]
+== Klasa pomocnicza (DateUtils.java)
+
+[source,java]
+----
+package pl.org.dragonia.helloapp.utils;
+
+
+import java.util.Calendar;
+
+public class DateUtils {
+    private Calendar calendar;
+
+    public DateUtils() {
+        this.calendar = Calendar.getInstance();
+    }
+
+    public String sayHello() {
+        String message = "Hello, today is ";
+
+        message += calendar.get(Calendar.DAY_OF_YEAR);
+        message += " day of year!";
+
+        return message;
+    }
+}
+----
+
+
+[.topic.source]
+== Klasa pomocnicza (Main.java)
+
+[source,java]
+----
+package pl.org.dragonia.helloapp;
+
+import pl.org.dragonia.helloapp.utils.DateUtils;
+
+public class Main {
+
+    public static void main(String[] args) {
+        DateUtils dateUtils = new DateUtils();
+
+        System.out.println(dateUtils.sayHello());
+    }
+}
+----
+
+
+[.topic.source]
+== Dokumentacja kodu (Javadoc)
+
+[source,java]
+----
+/**
+ * Method saying hello and which day of year is today.
+ *
+ * @return {String} string telling which day of year is today
+ */
+public String sayHello() {
+    String message = "Hello, today is ";
+
+    int dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+    switch (dayOfYear) {
+        case 1:
+            message += dayOfYear + "st";
+        break;
+        // ...
+        default:
+            message += dayOfYear + "th";
+        break;
+    }
+
+    message += " day of year!";
+
+    return message;
+}
+----
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
