@@ -1,0 +1,316 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Obiektowe Języki Programowania Klasy i obiekty
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== Podstawowe pytania
+
+[.incremental]
+Co jest fundamentalnym pojęciem z zakresu technologii obiektowej?:: ?
+Co to jest klasa?:: ?
+Co to jest obiekt?:: ?
+
+[.topic]
+== Co to jest klasa?
+
+====
+[quote, Bertrand Meyer]
+____
+Klasa to abstrakcyjny typ danych wraz z całkowitą lub częściową implementacją.
+____
+====
+
+[.topic]
+== Typowy błąd
+
+Od czasów struktur w Cobolu, rekordów w Pascalu i od momentu, gdy pierwszy programista języka C napisał swą pierwszą definicję struktury, ludzkość posiadła obiekty.
+
+
+[.topic.source]
+== Przykład prostej klasy
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+public class Human {
+
+    public String name;
+    public int age;
+
+    public void walk() {
+        System.out.println("Human with name " + name + " is walking...");
+    }
+}
+----
+
+[.topic.source]
+== Przykład prostej klasy
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+public class Human {
+
+    public String name;
+    public int age;
+
+    public void walk() {
+        System.out.println("Human with name " + name + " is walking...");
+    }
+}
+----
+
+{nbsp} +
+
+[.incremental]
+[source,java]
+----
+    Human human1 = new Human();
+
+    human1.name = "Jacek";
+    human1.age = 11;
+    human1.walk();
+----
+
+[.topic]
+== POJO
+
+[.incremental]
+* POJO - Plain Old Java Object
+* Klasa obiektów przetrzymujących jedynie proste informacje
+* Łatwe do przetumaczenia na inne typy oraz do serializacji
+
+[.topic.source]
+== Przykład prostej klasy - poprawny
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+public class Human {
+
+    private String name;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void walk() {
+        System.out.println("Human with name " + name + " is walking...");
+    }
+}
+----
+
+[.topic.source]
+== Wykorzystanie klasy Human
+
+[source,java]
+----
+    Human human1 = new Human();
+
+    human1.setName("Jacek");
+    human1.walk();
+----
+
+[.topic]
+== Modyfikatory dostępu
+
+[.incremental]
+public:: pozwala na dostęp wszystkich klasom z dowolnego pakietu
+package (domyślny):: dostęp do danej klasy/metody/pola mają jedynie klasy z tego samego pakietu
+private:: nikt poza samą klasą nie ma dostępu do danej klasy/pola
+
+[.topic]
+== Konstructory
+
+[.incremental]
+* Służą do tworzenia obiektów - wywoływane przy słowie kluczowym _this_
+* Jeżeli nie zdefiniujemy żadnego konstruktora - kompilator zrobi to za nas!
+* Istnieje możliwość przeciążania konstruktorów przez parametru (overloading)
+* Kiedy zdefiniujemy konstruktor z parametrami - nie możemy wywołać domyśknego!
+
+[.topic.source]
+== Klasa z wieloma konstruktorami
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+public class Human {
+    private String name;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Human() {
+    }
+
+    public Human(String name) {
+        this.name = name;
+    }
+}
+----
+
+[.topic]
+== Słowo kluczowe _this_
+
+[.incremental]
+* Może być stosowane wyłącznie w metodach niestatycznych (*!*), także konstruktorach
+* Przechowuje referencję do bieżącego obiektu
+* Może być pominięte jeśli w metodzie nie zdefiniujemy zmiennej lokalnej o tej samej nazwie co pole obiektu
+* Przekazywane niejawnie
+
+[.topic]
+== Statyczne elementy klasy
+
+[.incremental]
+* Statyczne mogą być zarówno pola jak i metody
+* Konstruktor nie może być statyczny
+* Dostęp do statycznego pola/metody nie wymaga inicjalizacji nowego obiektu
+* Kwestie wydajności, poprawności i unikania błędów
+
+[.topic.source]
+== Klasa z elementami statycznymi
+
+[source,java]
+----
+package java.lang;
+
+public final class Math {
+    public static final double PI = 3.14159265358979323846;
+    public static final double E = 2.7182818284590452354;
+
+    public static double sqrt(double a) {
+        // ...
+    }
+
+    public static double log(double a) {
+        // ...
+    }
+
+    public static double log10(double a) {
+        // ...
+    }
+}
+----
+
+[.topic]
+== Słowo kluczowe _final_
+
+[.incremental]
+* "To coś nie może być zmienione"
+* Rózne znaczenie w zależności od kontekstu
+* Może być zastosowane dla pól, metod oraz klas
+* Może poprawić wydajność - *z tym należy uważać !*
+
+[.topic]
+== Finalne pole klasy
+
+[.incremental]
+* Podstawowym zastosowaniem jest tworzenie "stałych czasu kompilacji"
+* Pole finalne przetrzymujące referencję do obiektu nie może być zmienione, ale *sam obiekt już tak*
+* Pole finalne nie musi być zainicjalizowane w czasie deklaracji
+* Argumenty metod również mogą być finalne
+
+[.topic]
+== Finalne metody
+
+[.incremental]
+* Klasy pochodne nie mogą zmieniać metod finalnych
+* Wywołanie metody finalnej może zostać przez kompilator na tzw. _wywołanie w miejscu_ (ang. _inline_) co skutkuje wyższą wydajnością
+* Każda metoda prywatna jest _de facto_ finalna
+
+[.topic]
+== Finalne klasy
+
+[.incremental]
+* Klasy finalnej nie można dziedziczyć
+* Dopisywanie słówka _final_ do metod klasy finalnej jest nadmiarowe i może wprowadzać w błąd!
+
+[.topic]
+== Klasy wewnętrzne
+
+[.incremental]
+* Klasa wewnętrzna to taka, która została zdefiniowana w ciele innej klasy
+* Klasy wewnętrzne posiadają "specjalny łącznik" dający im dostęp do pól klasy zewnętrznej
+* Odwołania do klasy zewnętrznej za pomocą *.this* oraz *.new*
+* Aby utworzyć obiekt klasy wewnętrznej, konieczny jest obiekt klasy zewnętrznej!
+
+[.topic.source]
+== Klasy wewnętrzne - przykład
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+public class DoThis {
+    void f() {
+        System.out.println("DoThis.f()");
+    }
+
+    public class Inner {<1>
+        public DoThis outer() {
+            return DoThis.this;<2>
+        }
+    }
+
+    public Inner inner() {
+        return new Inner();<3>
+    }
+}
+----
+<1> Definicja klasy wewnętrznej
+<2> Zwrócenie referencji do obiektu klasy zewnętrznej z obiektu klasy wewnętrznej
+<3> Stworzenie obiektu klasy wewnętrznej
+
+[.topic.source]
+== Klasy wewnętrzne - przykład wykorzystania
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+public class Main {
+    public static void main(String[] args) {
+        DoThis dt = new DoThis();<1>
+        DoThis.Inner dtinner = dt.inner();<2>
+        dtinner.outer.f();<3>
+
+        DoThis.Inner inner = dt.new Inner();<4>
+    }
+}
+----
+<1> Stworzenie obiektu klasy zewnętrznej
+<2> Stworzenie obiektu klasy wewnętrznej
+<3> Wywołanie metody obiektu klasy zewnętrznej z referencji w klasie wewnętrznej
+<4> Stworzenie obiektu klasy wewnętrznej z użyciem operatora *.new*
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
