@@ -1,0 +1,584 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Bogate Interfejsy Użytkownika JavaScript
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== O mnie
+
+[.incremental]
+Z wykształcenia:: fizyk
+Z zawodu:: projektant-programista / kontrybutor Open Source / freelancer
+Z zamiłowania:: wykładowca / prelegent / szkoleniowiec
+
+[.topic]
+== Wykład - materiały
+
+*Literatura:*
+[.incremental]
+* David Flanagan "JavaScript: The Definitive Guide"
+* Douglas Crockford "JavaScript: The Good Parts"
+* LinkedIn JavaScript Bootcamp
+* Mozilla Developer Network
+
+[.text-center]
+icon:github[] http://smoczysko.github.io/lectures/rui
+
+[.topic]
+== Ustalenia
+[.incremental]
+* Pytania mile widziane!
+* Konsultacje po zajęciach - informacja odpowiednio przed (np. mailowo)
+* Slajdy to tak naprawdę ściągawka dla wykładowcy ;)
+* Wykład nie jest obowiązkowy...
+
+[.topic]
+== Organizacja zajęć
+
+[.incremental]
+* 4 wykłady po 2 godziny (bez przerwy)
+* 4 laboratoria po 3 godziny (bez przerwy)
+
+[.topic]
+== Tematyka zajęć
+
+[.incremental]
+* JavaScript library tips & tricks
+* Tworzenie pluginu biblioteki jQuery
+* Underscore.js
+* Modularność w JavaScript: system.js
+
+[.topic]
+== Scope
+
+[.incremental]
+====
+[quote, Wikipedia]
+____
+(...) an association of a name to an entity (...) is the part of a computer program where the binding is valid: where the name can be used to refer to the entity.
+____
+====
+
+[.topic]
+== Scope
+
+Wyróżniamy dwa rodzaje zasięgu w JavaScript:
+[.incremental]
+* globalny
+* lokalny
+
+[.topic.source]
+== Zasięg globalny
+
+[source,html]
+----
+<script type="text/javascript">
+    var monkey = "Gorilla";
+
+    function greetVisitor () {
+        return alert("Hello dear blog reader!");
+    }
+
+    console.log(monkey);
+    console.log(greetVisitor());
+</script>
+----
+
+[.topic.source]
+== Zasięg lokalny
+
+[source,html]
+----
+<script type="text/javascript">
+    function greetVisitor(name) {
+        var message = "Hello " + name + "!";
+        console.log(message);
+    }
+
+    greetVisitor("John");<1>
+
+    console.log(name);<2>
+    console.log(message);<3>
+</script>
+----
+<1> Wypisze "Hello John!"
+<2> Wypisze undefined - dostęp do argumentów posiada wyłącznie funkcja
+<3> Wypisze undefined - message jest zmienną lokalną wewnętrznej funkcji
+
+[.topic.source]
+== Zasięg funkcji wewnętrznej
+
+[source,html]
+----
+<script type="text/javascript">
+    var name = "John";
+
+    function greetVisitor() {
+        var message = "Hello " + name + "!";
+        console.log(message);
+    }
+
+    greetVisitor("John");<1>
+
+    console.log(name);<2>
+</script>
+----
+<1> Wypisze "Hello John!"
+<2> Wypisze "John"
+
+[.topic.source]
+== Zasięg funkcji wewnątrz funkcji
+
+[source,html]
+----
+<script type="text/javascript">
+    function square(x) {
+        function logSquare() {
+            var value = x * x;
+            console.log('Square value of ' + x + ' is ' + value);
+        }
+
+        console.log(value);
+        logSquare();
+    }
+
+    console.log(square(2));
+    console.log(square(3));
+</script>
+----
+
+[.topic.source]
+== Closure
+
+[source,html]
+----
+<script type="text/javascript">
+    function makeAdder(x) {
+        return function(y) {
+            return x + y;
+        };
+    }
+
+    var add5 = makeAdder(5);
+    var add10 = makeAdder(10);
+
+    console.log(add5(2)); // ??
+    console.log(add10(2)); // ??
+</script>
+----
+
+[.topic]
+== Zastosowania domknięć w JavaScript
+
+[.incremental]
+* Zamiennik obiektów z jedną metodą (zamiast np. bind’owania)
+* Przekazywanie stałych wartości do event handlerów
+* Prostsze rozszerzanie prototypu
+* Ukrywanie roboczych zmiennych i funkcji skryptu/biblioteki
+
+[.topic.source]
+== The Infamous Loop Problem
+
+[source,html]
+----
+<script type="text/javascript">
+    function addLinks () {
+    	for (var i=0, link; i<5; i++) {
+    		link = document.createElement("a");
+    		link.innerHTML = "Link " + i;
+    		link.onclick = function () {
+    			alert(i);
+    		};
+    		document.body.appendChild(link);
+    	}
+    }
+
+    window.onload = addLinks;
+</script>
+----
+
+[.topic.source]
+== The Infamous Loop Problem - rozwiązanie
+
+[source,html]
+----
+<script type="text/javascript">
+    function addLinks () {
+    	for (var i=0, link; i<5; i++) {
+    		link = document.createElement("a");
+            link.innerHTML = "Link " + i;
+
+            link.onclick = function (num) {<1>
+                return function () {<2>
+                    alert(num);<3>
+                };
+            }(i);<1>
+
+            document.body.appendChild(link);
+    	}
+    }
+
+    window.onload = addLinks;
+</script>
+----
+<1> Definicja funkcji, która tworzy domknięcie i przekazanie parametru
+<2> Faktyczna funkcja wywoływana na onclick
+<3> Wyświetlenie liczby "zamrożonej" w kontekście domknięcia
+
+[.topic.source]
+== Yahoo JavaScript Module Pattern
+
+[source,html]
+----
+<script type="text/javascript">
+    var person = function () {
+    	var name = "Robert";
+    	return {
+    		getName : function () {
+    			return name;
+    		},
+    		setName : function (newName) {
+    			name = newName;
+    		}
+    	};
+    }();
+
+    console.log(person.name);
+    console.log(person.getName());
+    person.setName("Robert Nyman");
+    console.log(person.getName());
+</script>
+----
+
+[.topic.source]
+== Asynchronous Loop Problem
+
+[source,html]
+----
+<script type="text/javascript">
+    for (var i=0; i<4; i++){
+        setTimeout(function(){
+            console.log(i);
+        }, 1000);
+    }
+</script>
+----
+
+[.topic]
+== Immediately-Invoked Function Expression
+
+[.incremental]
+* Inaczej nazywane "IIFE" lub "Immediate Execution Function"
+* Każde wywołanie funkcji tworzy domknięcie - także IIFE
+* Wyrażenie funkcyjne zamiast tradycyjnej deklaracji
+* Tworzy własny, funkcyjny scope
+
+[.topic.source]
+== IIFE - sposób zapisu
+
+[source,html]
+----
+<script type="text/javascript">
+    // Notacja według Crockford'a
+    (function(){
+        /* code */
+    }());
+
+    // Poniższa notacja jest równoznaczna tej wyżej - kwestia "gustu"
+    (function(){
+        /* code */
+    })();
+</script>
+----
+
+[.topic.source]
+== Asynchronous Loop Problem - rozwiązanie
+
+[source,html]
+----
+<script type="text/javascript">
+    for (var i=0; i<4; i++){
+        (function (num) {
+            setTimeout(function(){
+                console.log(num);
+            }, 1000);
+        }());
+    }
+</script>
+----
+
+[.topic]
+== Hoisting
+
+[.incremental]
+* *hoist* - "raise (something) by means of ropes and pulleys."
+* Logiczna interpretacja kodu tłumacząca działanie skryptu
+* Interpreter nie modyfikuje naszego kodu *!*
+
+[.topic]
+== Hoisting
+
+====
+[quote, LinkedIn JavaScript Bootcamp]
+____
+*var statements* and *function* declarations are (conceptually) moved to the top of their enclosing scope.
+____
+====
+
+[.topic]
+== Hoisting - deklaracji zmiennych
+
+[.incremental]
+* Deklaracja zmiennej podlega hoistingowi, *przypisanie wartości nie*
+* Zmienne otrzymują domyślną wartość *undefined*
+* Zmienna jest dostępna w całym scope, w którym została zadeklarowana
+
+[.topic]
+== Hoisting - pozostałe zasady
+
+[.incremental]
+* Przypisanie wartości zmiennej pozostaje bez zmian
+* W pierwszej kolejności hoistingowi podlegają deklaracje zmiennych, w drugiej deklaracje funkcji
+
+[.topic.source]
+== Hoisting - przykład #1
+
+[source,javascript]
+----
+(function () {
+    var foo = 1;
+
+    console.log(foo);
+
+    function inner() {
+        console.log(foo);
+
+        foo = 3;
+
+        console.log(foo);
+    }
+
+    inner();
+
+    console.log(foo);
+})();
+----
+
+[.topic.source]
+== Hoisting - przykład #1
+
+[source,javascript]
+----
+(function () {
+    var foo = undefined;
+
+    function inner() {
+        console.log(foo);
+
+        foo = 3;
+
+        console.log(foo);
+    }
+
+    foo = 1;
+
+    console.log(foo);
+
+    inner();
+
+    console.log(foo);
+})();
+----
+
+[.topic.source]
+== Hoisting - przykład #2
+
+[source,javascript]
+----
+(function () {
+    var foo = 1;
+
+    console.log(foo);
+
+    function inner() {
+        console.log(foo);
+        var foo = 3;
+        console.log(foo);
+    }
+
+    inner();
+
+    console.log(foo);
+})();
+----
+
+[.topic.source]
+== Hoisting - przykład #2
+
+[source,javascript]
+----
+(function () {
+    var foo = undefined;
+
+    function inner() {
+        var foo = undefined;
+        console.log(foo);
+        foo = 3;
+        console.log(foo);
+    }
+
+    foo = 1;
+
+    console.log(foo);
+
+    inner();
+
+    console.log(foo);
+})();
+----
+
+[.topic.source]
+== Hoisting - przykład #3
+
+[source,javascript]
+----
+(function () {
+    var foo = 1;
+
+    function inner() {
+        if (!foo) {
+            var foo = 10;
+        }
+
+        console.log(foo);
+    }
+
+    inner();
+
+    console.log(foo);
+})();
+----
+
+[.topic.source]
+== Hoisting - przykład #3
+
+[source,javascript]
+----
+(function () {
+    var foo = undefined;
+
+    function inner() {
+        var foo = undefined;
+
+        if (!foo) {
+            foo = 10;
+        }
+
+        console.log(foo);
+    }
+
+    foo = 1;
+
+    inner();
+
+    console.log(foo);
+})();
+----
+
+[.topic.source]
+== Hoisting - przykład #4
+
+[source,javascript]
+----
+(function () {
+    foo();
+
+    return;
+
+    function foo() {
+        console.log("Hello ;)");
+    }
+})();
+----
+
+[.topic.source]
+== Hoisting - przykład #4
+
+[source,javascript]
+----
+(function () {
+    function foo() {
+        console.log("Hello ;)");
+    }
+
+    foo();
+
+    return;
+})();
+----
+
+[.topic]
+== Prototype - czyli dlaczego to wszystko ma znaczenie?
+
+[.incremental]
+* Biblioteka stworzona w 2005 roku
+* „Zakazana” w użyciu produkcyjnym (mimo wszystko ma ~2% wykorzystania rynkowego, głównie legacy systems)
+* Bardzo dobra baza przydatnego kodu!
+
+[.topic]
+== Prototype - antywzorce
+
+[.incremental]
+* Future-proofing
+* Shadowing
+* Nadpisywanie host i native objects
+
+[.topic]
+== Host and Native objects
+
+[.incremental]
+* Native object: obiekt implementujący specyfikację ECMAScript, np. Object, Date, Math
+* Host object: obiekt dostarczany i specyficzny dla środowiska uruchomieniowego (przeglądarki/silnika JavaScript), np. window, document, XMLHttpRequest
+
+[.topic]
+== Verbotten
+image::verboten.jpg[crole="invert",width=400]
+
+[.topic.source]
+== Sandboxing
+
+[source,javascript]
+----
+var sb, iframe = document.createElement(‘iframe’),
+    document.body.appendChild(iframe);
+
+sb = window.frames[1];
+
+sb.Array.prototype.remove = function (member) {
+    // ...
+};
+
+var arr = new sb.Array(‘carrot’, ‘potato’, ...);
+
+arr.remove(‘potato’);
+
+console.log(Array.prototype.remove); // undefined!
+----
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
