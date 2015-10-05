@@ -58,7 +58,7 @@ icon:github[] http://smoczysko.github.io/lectures/oopl
 == Zaliczenie laboratoriów
 
 [.incremental]
-* 6 mini-kolokwiów w trakcie laboratoriów (każde za 5pkt)
+* 5 mini-kolokwiów w trakcie laboratoriów (każde za 6pkt)
 * 1 projekt za 30 pkt
 * wymagane zdobycie przynajmniej 31 pkt
 
