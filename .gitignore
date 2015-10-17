@@ -3,3 +3,5 @@
 *.html
 **/slides.html
 .idea
+asciidoctor.css
+build.properties
