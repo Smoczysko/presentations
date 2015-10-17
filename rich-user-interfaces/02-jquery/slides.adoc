@@ -1,0 +1,586 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Bogate Interfejsy Użytkownika jQuery plugin
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== Co to jest jQuery?
+
+[.incremental]
+* szybka i mała biblioteka JavaScript (***)
+* ułatwia przeglądanie i manipulację drzewa DOM
+* upraszcza obsługę zdarzeń, animację oraz operacje AJAX'owe
+* wsparcie (i jednakowe API) dla najpopularniejszych przeglądarek
+
+[.topic]
+== jQuery Foundation Projects
+
+[.incremental]
+* jQuery
+* jQuery UI (User Interface)
+* jQuery Mobile
+* QUnit (JS unit testing)
+* Sizzle (CSS selector engine)
+
+[.topic.source]
+== jQuery fundamentals - uruchamianie
+
+[source,html]
+----
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">
+    window.onload = function() {
+        // Some code
+    };
+
+    $(window).load(function() {
+        // Some code
+    });
+
+    $(ready).load(function() {
+        // Some code
+    });
+</script>
+----
+
+[.topic]
+== CDN
+
+[.incremental]
+* Content Delivery Network (Content Distribution Network)
+* Rozproszony geograficznie system dostarczania treści cyfrowych
+* Wysoka wydajność i szybkość
+* Serwery CDN często znajdują się w ISP data center
+
+[.topic.source]
+== jQuery fundamentals - DOM traversal
+
+[source,html]
+----
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#someID').html('Hello!');
+
+        $('p').css('color', 'red');
+
+        $('.description').css('font-weight', 'bold');
+
+        $('[data-parent-chapter="someChapter"]').remove();
+
+        $('#someID').find('.someClass').text('Some text');
+    });
+</script>
+----
+
+[.topic]
+== jQuery fundamentals - DOM traversal
+
+[.incremental]
+* Im bardziej specyficzny selektor tym lepiej ("div.data .gonzalez" będzie wolniejsze niż ".data td.gonzalez")
+* Pośrednia dokładność jest zbędna - zbyt rozbudowany selector jest wolny
+* Unikamy uniwersalnych selektorów: np. "*" oraz ":<type>"
+
+[.topic.source]
+== jQuery fundamentals - DOM manipulation
+
+[source,html]
+----
+<script type="text/javascript">
+    $(document).ready(function () {
+        var $element = $('#someElementID');
+
+        $element.css({
+            'border': '1px solid red',
+            'text-align': 'center'
+        });
+        $element.text('Some very important text')
+        $element.show();
+    });
+</script>
+----
+
+[.topic.source]
+== jQuery fundamentals - events
+
+[source,html]
+----
+<script type="text/javascript">
+    $(document).ready(function () {
+        $( "p" ).click(function() {
+            console.log( "You clicked a paragraph!" );
+        });
+    });
+
+    $( "button.alert" ).on( "click", function() {
+        console.log( "A button with the alert class was clicked!" );
+    });
+
+    $( "<button class='alert'>Alert!</button>" ).
+        appendTo( document.body );
+
+    $( "input" ).on("click change",
+        function() {
+            console.log( "An input was clicked or changed!" );
+        }
+    );
+</script>
+----
+
+[.topic.source]
+== jQuery fundamentals - events data binding
+
+[source,html]
+----
+<script type="text/javascript">
+    var inputs = document.getElementsByTagName('input'), i;
+    for (i = 0; i < inputs.length; i++) {
+        inputs[i].onchange = function () {
+            var foo = "bar";
+            return function () {
+                console.log("Foo = " + bar);
+            }
+        }();
+    }
+</script>
+----
+
+[.topic.source]
+== jQuery fundamentals - events data binding
+
+[source,html]
+----
+<script type="text/javascript">
+    var inputs = document.getElementsByTagName('input'), i;
+    for (i = 0; i < inputs.length; i++) {
+        inputs[i].onchange = function () {
+            var foo = "bar";
+            return function () {
+                console.log("Foo = " + bar);
+            }
+        }();
+    }
+
+    $( "input" ).on(
+        "change",
+        { foo: "bar" },
+        function( event ) {
+            console.log("Foo = " + event.data.foo);
+        }
+    );
+</script>
+----
+
+[.topic]
+== Czym jest plugin jQuery?
+
+[.incremental]
+* Biblioteka JavaScript dostosowana do pewnego API
+* jQuery jest tutaj tylko przykładem (*!*) - te same zasady obowiązują w innych bibliotekach (np. underscore.js)
+
+[.topic]
+== Typy pluginów w jQuery
+
+[.incremental]
+* mutatory - modyfikacja elementów DOM
+* utility - dodatkowe funkcjonalności, nie związane z drzewem DOM
+* widgets - bardziej rozbudowane rozszerzenia wspierające stanowość (tylko jQuery UI)
+
+[.topic]
+== Mutator plugin - podstawy
+
+[.incremental]
+* Prototyp obiektu jQuery znajduje się w property jQuery.fn
+* Funkcje mutujące dodajemy do prototypu jQuery
+* jQuery nie gwarantuje obecności aliasu $ (*!*)
+
+[.topic]
+== Mutator plugin - podstawy
+
+[.incremental]
+* Każda funkcja typu mutator wykonywana jest na obiekcie jQuery
+* Obiektem jQuery może być pojedynczy element DOM lub wiele takowych (obiekt "array-like")
+* Referencja do elementu jQuery znajduje się w zmiennej this funkcji mutatora
+
+[.topic.source]
+== Mutator plugin - przykład
+
+[source,html]
+----
+(function ($) {
+    $.fn.greenify = function() {
+        this.css( "color", "green" );
+        this.addClass( "greenified" );
+    }
+})(jQuery);
+
+$( "a" ).greenify();
+----
+
+[.topic.source]
+== jQuery chaining
+
+[source,html]
+----
+<script type="text/javascript">
+    $(‘div.container’)
+        .css( ‘background-color’, ‘red’ )
+        .width( 100 )
+        .height( 150 )
+        .addClass( ‘container-fluid’ );
+</script>
+----
+
+[.topic]
+== jQuery chaining
+
+[.incremental]
+* Chaining pozwala na wykonywanie wielu operacji na jednym elemencie/grupie elementów
+* Każda operacja powinna być wykonywana na wszystkich elementach grupy
+* Element/grupa powinna być zwracana przez funkcję do dalszego chainingu
+
+[.topic.source]
+== jQuery chaining - przykład
+
+[source,html]
+----
+(function ($) {
+    $.fn.greenify = function() {
+        this.each(function (_, element) {
+            var $element = $(element);
+
+            $element.css( "color", "green" );
+            $element.addClass( "greenified" );
+        });
+
+        return this;
+    }
+})(jQuery);
+
+$( "a" ).greenify().show();
+----
+
+[.topic]
+== jQuery plugin options
+
+[.incremental]
+* Opcje przekazywane do funkcji powinny być opcjonalne kiedy tylko to możliwe
+* Domyślny zestaw opcji powinien być dostępny globalnie i modyfikowalny
+* Funkcje wykorzystywane przez plugin także powinny być dostępne globalnie i modyfikowalne
+
+[.topic.source]
+== jQuery plugin options
+
+[source,html]
+----
+(function ($) {
+    // Plugin definition.
+    $.fn.hilight = function( options ) {
+        var opts = $.extend( {}, $.fn.hilight.defaults, options );
+    };
+
+    // Plugin defaults – added as a property on our plugin function.
+    $.fn.hilight.defaults = {
+        foreground: "red",
+        background: "yellow"
+    };
+})(jQuery);
+
+fn.hilight.defaults.background = "red";
+
+$( "a" ).hilight();
+$( "p" ).hilight( { foregrounbd: "yellow" } );
+$( "span" ).hilight( { foregrounbd: "blue", background: "white" } );
+----
+
+[.topic]
+== jQuery plugin callbacks
+
+[.incremental]
+* Istnieją dwa sposoby dostarczania funkcjonalności reakcji na pewne zdarzenia biblioteki
+* Callbacks - czysty JavaScript, jako opcje, Callbacks Driven Development
+* Deferred/Promise pattern
+
+[.topic]
+== Deferred/Promise pattern
+image::deferred-promise.png[crole="invert", width="400"]
+
+[.topic.source]
+== Deferred/Promise pattern
+
+[source,html]
+----
+(function ($) {
+    $.fivesecs = function() {
+        var defer = new $.Deferred();
+
+        function logic(num, dfd) {
+            setTimeout(function(){
+                if (num == 5) {
+                    dfd.resolve();
+                } else {
+                    dfd.notify(num * 20);
+                }
+            }, num * 1000);
+        }
+
+        for (var i = 1; i < 6; i++){
+            logic(i, defer);
+        }
+
+        return defer.promise();
+    };
+})(jQuery);
+----
+
+[.topic.source]
+== Deferred/Promise pattern
+
+[source,html]
+----
+jQuery.fivesecs().
+    done(function () {
+        console.log("Countdown complete!");
+    }).
+    progress(function (percentage) {
+        console.log("Countdown done in " + percentage + "%");
+    });
+----
+
+[.topic.source]
+== Deferred/Promise - $.when()
+
+[source,html]
+----
+$.when( $.ajax( "test.aspx" ) ).then(function( data, textStatus, jqXHR ) {
+    alert( jqXHR.status ); // Alerts 200
+});
+
+$.when().then(function() {
+    alert( "I fired immediately" );
+});
+----
+
+[.topic.source]
+== Deferred/Promise - $.when()
+
+[source,html]
+----
+var d1 = $.Deferred(), d2 = $.Deferred(),
+    defers = [d1, d2];
+
+$.when( d1, d2 ).done(function ( v1, v2 ) {
+    console.log( v1 ); // "Fish"
+    console.log( v2 ); // "Pizza"
+});
+
+$.when.apply( $, defers ).done(function ( v1, v2 ) {
+    console.log( v1 ); // "Fish"
+    console.log( v2 ); // "Pizza"
+});
+
+d1.resolve( "Fish" );
+d2.resolve( "Pizza" );
+----
+
+[.topic]
+== jQuery UI Widget Factory
+
+[.incremental]
+* Dostępne w jQuery UI od wersji 1.8
+* Pozwala budować pluginy jQuery posiadające stan - przynależny do każdej instancji
+* *Widget* to nazwa oficjalnie wspieranych funkcjonalności jQuery UI
+* Pluginy tworzone za pomocą Widget Factory nie muszą być związane z UI (*!*)
+
+[.topic]
+== jQuery UI Widget Factory - podstawy
+
+[.incremental]
+* $.widget(name, functionsObject) - funkcja tworząca nasz widget
+* Kontekstem widgetu jest obiekt, nie element DOM (*!*)
+* Nazwa pluginu musi zawierać przestrzeń nazw ("<namespace>.<name>")
+* Przestrzeń nazw "ui" jest zarezerwowana dla biblioteki jQuery UI
+
+[.topic.source]
+== jQuery UI Widget Factory - _create
+
+[source,html]
+----
+$.widget( "nmk.progressbar", {
+
+    _create: function() {
+        var progress = this.options.value + "%";
+        this.element.addClass( "progressbar" ).text( progress );
+    }
+
+});
+
+$( "<div />" ).appendTo( "body" ).progressbar({ value: 20 });
+----
+
+[.topic.source]
+== jQuery UI Widget Factory - opcje domyślne
+
+[source,html]
+----
+$.widget( "nmk.progressbar", {
+
+    // Default options.
+    options: {
+        value: 0
+    },
+
+    _create: function() {
+        var progress = this.options.value + "%";
+        this.element.addClass( "progressbar" ).text( progress );
+    }
+
+});
+
+$( "<div />" ).appendTo( "body" ).progressbar();
+----
+
+[.topic.source]
+== jQuery UI Widget Factory - metody publiczne
+
+[source,html]
+----
+$.widget( "nmk.progressbar", {
+
+    // ...
+
+    value: function( value ) {
+
+        if ( value === undefined ) {
+            return this.options.value;
+        } else {
+            this.options.value = this._constrain( value );
+            var progress = this.options.value + "%";
+            this.element.text( progress );
+        }
+    }
+});
+
+var $progressbar = $( "<div />" ).appendTo( "body" ).progressbar();
+
+$progressbar.value(40);
+console.log($progressbar.value()); // 40
+----
+
+[.topic.source]
+== jQuery UI Widget Factory - metody prywatne
+
+[source,html]
+----
+$.widget( "nmk.progressbar", {
+
+    // ...
+
+    _constrain: function( value ) {
+
+        if ( value > 100 ) {
+            value = 100;
+        }
+
+        if ( value < 0 ) {
+            value = 0;
+        }
+
+        return value;
+    }
+});
+----
+
+[.topic.source]
+== jQuery UI Widget Factory - zmiana opcji
+
+[source,html]
+----
+$.widget( "nmk.progressbar", {
+    // ...
+
+    _create: function() {
+        this.element.addClass( "progressbar" );
+        this._update();
+    },
+
+    _setOption: function( key, value ) {
+        this.options[ key ] = value;
+        this._update();
+    },
+
+    _update: function() {
+        var progress = this.options.value + "%";
+        this.element.text( progress );
+    }
+});
+
+var $progressbar = $( "<div />" ).appendTo( "body" ).progressbar();
+
+$progressbar.option("value", 35);
+console.log($progressbar.option("value")); // 35
+----
+
+[.topic.source]
+== jQuery UI Widget Factory - callbacks
+
+[source,html]
+----
+$.widget( "nmk.progressbar", {
+    // ...
+
+    _update: function() {
+        var progress = this.options.value + "%";
+        this.element.text( progress );
+
+        if ( this.options.value == 100 ) {
+            this._trigger( "complete", null, { value: 100 } );
+        }
+    }
+});
+
+var $progressbar = $( "<div />" ).appendTo( "body" ).progressbar({
+    complete: function( event, data ) {
+        console.log( "Callbacks are great!" );
+    }
+});
+
+$progressbar.option("value", 100);
+----
+
+[.topic.source]
+== jQuery UI Widget Factory - callbacks
+
+[source,html]
+----
+$.widget( "nmk.progressbar", {
+    // ...
+
+    _destroy: function() {
+        this.element
+            .removeClass( "progressbar" )
+            .text( "" );
+    }
+});
+
+var $progressbar = $( "<div />" ).appendTo( "body" ).progressbar();
+
+$progressbar.destroy();
+----
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]

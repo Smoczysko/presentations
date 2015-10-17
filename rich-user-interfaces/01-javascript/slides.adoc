@@ -271,7 +271,7 @@ Wyróżniamy dwa rodzaje zasięgu w JavaScript:
 [source,html]
 ----
 <script type="text/javascript">
-    for (var i=0; i<4; i++){
+    for (var i = 0; i < 4; i++){
         setTimeout(function(){
             console.log(i);
         }, 1000);
@@ -312,12 +312,12 @@ Wyróżniamy dwa rodzaje zasięgu w JavaScript:
 [source,html]
 ----
 <script type="text/javascript">
-    for (var i=0; i<4; i++){
+    for (var i = 0; i < 4; i++){
         (function (num) {
             setTimeout(function(){
                 console.log(num);
             }, 1000);
-        }());
+        }(i));
     }
 </script>
 ----
