@@ -237,11 +237,11 @@ class Art {
 }
 
 public class Drawing extends Art {
-    public Cartoon() {
+    public Drawing() {
         System.out.println("Cartoon class constructor");
     }
 
-    public Cartoon(String painter) {
+    public Drawing(String painter) {
         super(painter);
         System.out.println("Cartoon painter: " + painter);
     }
@@ -265,7 +265,7 @@ class Art {
 }
 
 public class Drawing extends Art {
-    public Cartoon(String painter) {
+    public Drawing(String painter) {
         super();
         System.out.println("Cartoon painter: " + painter);
     }
@@ -398,7 +398,7 @@ public class Bird extends Animal {
 
 [.incremental]
 * Każda klasa dziedziczy po klasie Object, która posiada metodę getClass()
-* Każda klasa C dziedzicząca po klasie A jest także typu C
+* Każda klasa C dziedzicząca po klasie A jest także typu A
 * Operator *instanceof* mówi nam, czy obiekt jest danego typu (z uwzględnieniem dziedziczenia)
 
 [.topic.source]
