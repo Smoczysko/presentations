@@ -55,6 +55,16 @@ icon:github[] http://smoczysko.github.io/lectures/oopl
 * Egzamin: ostatni "poniedziałek" semestru o godzinie 16:00 w sali 221 GG
 
 [.topic]
+== Harmonogram
+
+[.incremental]
+* wykłady do 2 listopada
+* 9 października - dodatkowy wykład (opcjonalny)
+* 19 stycznia - ostateczny termin dostarczenia projektu
+* 25 stycznia - egzamin ustny
+* 26 stycznia - możliwość poprawienia jednego kolokwium
+
+[.topic]
 == Zaliczenie laboratoriów
 
 [.incremental]
@@ -80,6 +90,15 @@ icon:github[] http://smoczysko.github.io/lectures/oopl
 * 61 – 70 pkt – dobry
 * 71 – 75 pkt – dobry plus
 * 76 – 80 pkt – bardzo dobry
+
+[.topic]
+== Dodatkowe zasady zaliczenia
+
+[.incremental]
+* Osoby z zaliczonymi laboratoriami także realizują projekt
+* Projekt jest podstawą do egzaminu ustnego, nie podglega ocenie
+* Wynik procentowy jest przeliczany na punkty z lab + projektu (max 60 pkt)
+* Możliwe jest realizowanie ponowne programu laboratoriów
 
 [.topic]
 == Zakres wykładów
