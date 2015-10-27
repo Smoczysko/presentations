@@ -1,0 +1,302 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Technologie Java Enterprise JavaServer Pages
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== Czym jest JSP
+
+[.incremental]
+* Technologia server-side pozwalająca tworzenie dynamicznych aplikacji webowych
+* Metoda niezależna od platformy
+* Część fundamentalna Java EE 6 Web Profile specification
+* Posiada pełen dostęp do API Java EE
+
+[.topic]
+== Składowe stron JSP
+
+image::jsp-contents.png[Składowe stron JSP, 650, role="middle"]
+
+[.topic]
+== Zalety tworzenia stron za pomocą JSP
+
+[.incremental]
+* Dynamiczne elementy strony są tworzone w tym samym języku (Java) co część serwerowa
+* Wygodny sposób tworzenia struktury HTML w porównaniu do pisania jej do strumienia
+* Możliwość interakcji z serwerem
+
+[.topic]
+== Zalety tworzenia stron za pomocą JSP
+
+[.incremental]
+* Składnia rozszerzalna za pomocą JSTL (Tag Library)...
+* ... także swoich
+* Mogą być wykorzystywane jako szablony (uzupełniane danymi)
+
+[.topic]
+== Zasady działania stron JSP
+
+[.incremental]
+* Nie wymagają dodatkowej obsługi np. przez servlety...
+* ... same są servletami (*!*)
+* Kompilacja do servletu następuje tylko kiedy jest to potrzebne
+* Cyklem życia servletu JSP zarządza kontener JSP
+
+[.topic]
+== Cykl życia servletu JSP
+
+image::jsp-servlet-lifecycle.png[Cykl życia servletu JSP, 650, role="middle"]
+
+[.topic.source]
+== Podstawowa strona JSP
+
+[source,html]
+----
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<html>
+    <head>
+        ….
+    </head>
+    <body>
+        ….
+        <p>Hello, ${name}</p>
+        ….
+    </body>
+</html>
+----
+
+[.topic.source]
+== Servlet przekazujący informacje do strony JSP
+
+[source,html]
+----
+@WebServlet(urlPatterns = "/hello")
+public class HelloServlet extends HttpServlet {
+
+   @Override
+   protected void doGet(HttpServletRequest req,
+    HttpServletResponse resp) {
+
+        String name = request.getParameter("name");
+        if (name == null || name.isEmpty()) {
+            name = "Anonymous";
+        }
+
+        request.setAttribute("name", name);
+
+        request.getRequestDispatcher("hello.jsp").
+            forward(request, response);
+   }
+}
+----
+
+[.topic]
+== JSP actions
+
+[.incremental]
+* Pozwalają na kontrolowanie zachowania servletu JSP
+* Typowe akcje to wykorzystanie JavaBean, przekierowanie do innej strony , dynamiczne doładowanie innego pliku (np. JSP)
+
+[.topic]
+== Podstawowe akcje JSP
+
+[.incremental]
+* jsp:include
+* jsp:useBean
+* jsp:setProperty
+* jsp:getProperty
+* jsp:forward
+
+[.topic]
+== Scope obiektów JSP
+
+[.incremental]
+* page - domyślny, dostępny tylko na danej stronie
+* request - dostępny dla wszystkich stron obsługujących żądanie
+* session - dostępny w ramach utworzonej sesji HTTP
+* application - przypisany do obiektu aplikacji, dostępny wszędzie
+
+[.topic]
+== Co to jest JavaBean?
+
+[.incremental]
+* Posiada bezargumentowy konstruktor
+* Jest serializowalny i implementuje interfejs Serializable
+* Może posiadać wiele pól z możliwością odczytu i zapisu
+* Odczyt i zapis może być realizowany za pomocą getterów i setterów (konwencja)
+
+[.topic.source]
+== Message bean
+
+[source,java]
+----
+public class Message implements Serializable {
+    private String author;
+    private String message;
+
+    public Message() {
+        super();
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}
+----
+
+[.topic.source]
+== Storage service
+
+[source,java]
+----
+public class MessageStorageService {
+    private List<Message> messages = new ArrayList<Message>();
+
+    public void add(Message message) {
+        messages.add(message);
+    }
+
+    public List<Message> getAllMessages(){
+        return messages;
+    }
+}
+----
+
+[.topic.source]
+== Wykorzystanie beanów w JSP
+
+[source,html]
+----
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<html>
+<body>
+    <jsp:useBean id="storage"
+        class="pl.edu.ug.introductiontojee.jsp.usebean.MessageStorageService"
+        scope="application" />
+
+    <jsp:useBean
+        id="message"
+        class="pl.edu.ug.introductiontojee.jsp.usebean.Message"
+        scope="request" />
+
+    <jsp:setProperty name="message" property="*" />
+</body>
+</html>
+----
+
+[.topic]
+== Scriplets
+
+[.incremental]
+* Skrypt pisany w języku Java umieszczany w stronie JSP
+* Pozwala na tworzenie zmiennych, metod oraz wyrażeń języka Java
+* Niezalecany sposób tworzenia dynamicznych aplikacji (*!*)
+
+[.topic.source]
+== Przykład scripletu
+
+[source,html]
+----
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<html>
+<body>
+    <jsp:useBean id="storage"
+        class="pl.edu.ug.introductiontojee.jsp.usebean.MessageStorageService"
+        scope="application" />
+
+    <jsp:useBean
+        id="message"
+        class="pl.edu.ug.introductiontojee.jsp.usebean.Message"
+        scope="request" />
+
+    <jsp:setProperty name="message" property="*" />
+
+    <%
+        storage.add(message);
+        response.sendRedirect(request.getContextPath());
+    %>
+</body>
+</html>
+----
+
+[.topic]
+== JSTL
+
+[.incremental]
+* JavaServer Pages Standard Library
+* Kolekcja tagów JSP z bazowymi funkcjonalnościami
+* Wspiera takie funkcjonalności jak iteracja, manipulacja dokumentami XML, internacjonalizacja, instrukcje warunkowe i wiele więcej
+
+[.topic]
+== Grupy JSTL
+
+[.incremental]
+* Core tags (domyślny prefix: c)
+* Formatting tags (domyślny prefix: fmt)
+* SQL tags (domyślny prefix: sql)
+* XML tags (domyślny prefix: x)
+* JSTL functions (domyślny prefix: fn)
+
+[.topic]
+== Podstawowe tagi Core Tags
+
+[.incremental]
+* <c:out>
+* <c:set>
+* <c:forEach>
+* <c:if>
+* <c:choose>
+* <c:when>
+* <c:otherwise>
+
+[.topic]
+== Include
+
+[.incremental]
+* Pozwala wstawiać pliki na generowaną stronę
+* Dobry sposób na wydzielenie powtarzających się fragmentów (takich jak nagłówek czy stopka) do osobnych plików
+* Wstawiane pliki mogą być stronami JSP
+
+[.topic]
+== Obsługa błędów
+
+[.incremental]
+* JSP pozwala na wyłapywanie i obsługę wyjątków Checked oraz Unchecked
+* Strona, która może wygenerować wyjątek musi wskazać stronę obsługi
+* Dodatkowa metainformacja na stronie błędu informująca kompilator, że jest to strona błędu, jest wymagana
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
