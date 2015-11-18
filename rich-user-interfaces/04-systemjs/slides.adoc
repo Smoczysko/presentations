@@ -1,0 +1,309 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Bogate Interfejsy Użytkownika System.js
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== Problemy dużych aplikacji webowych
+
+[.incremental]
+* Duże strony stają się aplikacjami
+* Złożoność kodu rośnie wraz z rozrostem aplikacji
+* "Assembly problem"
+* Potrzeba mniejszych, "dyskretnych" modułów
+* Optymalizowany kod dostępny w zaledwie kilku zapytaniach HTTP
+
+[.topic.source]
+== Własne rozwiązanie
+
+[source,html]
+----
+var Zoo = (function() {
+  var getBarkStyle = function(isHowler) {
+    return isHowler? 'woooooow!': 'woof, woof!';
+  };
+
+  var Dog = function(name, breed) {
+    this.bark = function() {
+      return name + ': ' + getBarkStyle(breed === 'husky');
+    };
+  };
+
+  var Wolf = function(name) {
+    this.bark = function() {
+      return name + ': ' + getBarkStyle(true);
+    };
+  };
+
+  return {
+    Dog: Dog,
+    Wolf: Wolf
+  };
+})();
+----
+
+[.topic.source]
+== Własne rozwiązanie
+
+[source,html]
+----
+var myDog = new Zoo.Dog('Sherlock', 'beagle');
+console.log(myDog.bark()); // Sherlock: woof, woof!
+
+var myWolf = new Zoo.Wolf('Werewolf');
+console.log(myWolf.bark()); // Werewolf: woooooow!
+----
+
+[.topic]
+== Co jest nie tak z tym rozwiązaniem?
+
+[.incremental]
+* Wrażliwość na zmiany - każdy moduł może być zmodyfikowany (dostęp globalny)
+* Brak skalowalności - przy dużej ilości modułów w aplikacji, ładujemy je wszystkie (zazwyczaj) zamiast tylko te wymagane
+* Nieproduktywność - ręczne rozwiązywanie zależności (kolejność skryptów etc.)
+
+[.topic]
+== !
+image::dont-forget.jpg["Don't forget!", crole="invert", role="middle", width="700"]
+
+[.topic]
+== Gotowe rozwiązania
+
+[.incremental]
+* Dojo: dojo.require("some.module")
+* LABjs: $LAB.script("some/module.js")
+* CommonJS: require("some/module")
+* AMD
+* ...
+
+[.topic]
+== Rozwiązanie
+
+[.incremental]
+* Mechanizm podobny do #include/import/require...
+* ... z możliwością pobierania zagnieżdżonych zależności...
+* ... łatwy w użyciu...
+* ... wspierany przez narzędzia do optymalizacji!
+
+[.topic.source]
+== CommonJS
+
+[source,html]
+----
+(function (module) {
+    var getBarkStyle = function(isHowler) {
+      return isHowler? 'woooooow!': 'woof, woof!';
+    };
+
+    var Dog = function(name, breed) {
+      this.bark = function() {
+        return name + ': ' + getBarkStyle(breed === 'husky');
+      };
+    };
+
+    var Wolf = function(name) {
+      this.bark = function() {
+        return name + ': ' + getBarkStyle(true);
+      };
+    };
+
+    module.exports = {
+      Dog: Dog,
+      Wolf: Wolf
+    };
+})(module);
+----
+
+[.topic.source]
+== CommonJS
+
+[source,html]
+----
+var Zoo = require('./zoo');
+
+var myDog = new Zoo.Dog('Sherlock', 'beagle');
+console.log(myDog.bark()); // Sherlock: woof, woof!
+
+var myWolf = new Zoo.Wolf('Werewolf');
+console.log(myWolf.bark()); // Werewolf: woooooow!
+----
+
+[.topic]
+== CommonJS - zalety
+
+[.incremental]
+* Oficjalny format Node.js oraz komponentów NPM...
+* ... a to oznacza, że moduł CommonJS ma dostęp do całego ekosystemu NPM
+* Prosta i wygodna składnia
+* Istnieje możliwość zagwarantowania kolejności ładowania modułów
+
+[.topic]
+== CommonJS - wady
+
+[.incremental]
+* Aby korzystać z niego potrzebne jest dodatkowe wsparcie (np. Browserify albo Webpack)
+* Ładowanie synchroniczne, a co za tym idzie - sekwencyjne
+* Zazwyczaj komponenty NPM posiadają wiele zależności - tzw. "dependency hell"
+
+[.topic.source]
+== AMD - Asynchronous Module Definition
+
+[source,html]
+----
+define('zoo', [], function() {
+  var getBarkStyle = function (isHowler) {
+    return isHowler? 'woooooow!': 'woof, woof!';
+  };
+
+  var Dog = function (name, breed) {
+    this.bark = function() {
+      return name + ': ' + getBarkStyle(breed === 'husky');
+    };
+  };
+
+  var Wolf = function (name) {
+    this.bark = function() {
+      return name + ': ' + getBarkStyle(true);
+    };
+  };
+
+  return {
+    Dog: Dog,
+    Wolf: Wolf
+  };
+});
+----
+
+[.topic.source]
+== AMD - Asynchronous Module Definition
+
+[source,html]
+----
+require(['zoo'], function(Zoo) {
+  var myDog = new Zoo.Dog('Sherlock', 'beagle');
+  console.log(myDog.bark()); // Sherlock: woof, woof!
+
+  var myWolf = new Zoo.Wolf('Werewolf');
+  console.log(myWolf.bark()); // Werewolf: woooooow!
+});
+----
+
+[.topic]
+== AMD - zalety
+
+[.incremental]
+* Równoległe ładowanie wielu modułów
+* Łatwe oddalenie ładowania modułów nie potrzebnych przy ładowaniu strony
+
+[.topic]
+== AMD - wady
+
+[.incremental]
+* Ładowanie asynchroniczne źle zaprojektowane potrafi doprowadzić do wyścigów
+* Nie można zagwarantować kolejności załadowania modułów
+* Bardziej skomplikowany i mniej czytelny zapis, szczególnie przy dużej ilości zależności (wartość tablicowa)
+
+[.topic]
+== System.js
+
+[.incremental]
+* Uniwersalne narzędzie do ładowania modułów
+* Wspiera takie moduły jak ES6, CommonJS, AMD, NodeJS oraz globalne zależności
+* Wsparcie dla Traceur i Babel (transpilers)
+* Rozszerzalne za pomocą pluginów
+
+[.topic.source]
+== System.js
+
+[source,html]
+----
+<script src="javascript/system.js"></script>
+<script type="text/javascript">
+    System.config({
+        baseURL: 'javascript'
+    });
+
+    System.import('main.js').then(function (Zoo) {
+        var myDog = new Zoo.Dog('Sherlock', 'beagle');
+
+        console.log(myDog.bark()); // Sherlock: woof, woof!
+
+        var myWolf = new Zoo.Wolf('Werewolf');
+
+        console.log(myWolf.bark()); // Werewolf: woooooow!
+    });
+</script>
+----
+
+[.topic.source]
+== System.js - ladowanie wielu modułów
+
+[source,html]
+----
+<script src="javascript/system.js"></script>
+<script type="text/javascript">
+    System.config({
+        baseURL: 'javascript'
+    });
+
+    Promise.all([
+        System.import('main.js'),
+        System.import('jquery.js')
+    ]).then(function(modules) {
+        var Zoo = modules[0],
+            jQuery = modules[1];
+
+        var myDog = new Zoo.Dog('Sherlock', 'beagle');
+
+        console.log(myDog.bark()); // Sherlock: woof, woof!
+
+        var myWolf = new Zoo.Wolf('Werewolf');
+
+        console.log(myWolf.bark()); // Werewolf: woooooow!
+    });
+</script>
+----
+
+[.topic.source]
+== System.js - ladowanie innych zasobów
+
+[source,html]
+----
+<script src="javascript/system.js"></script>
+<script type="text/javascript">
+    System.config({
+        baseURL: ''
+    });
+
+    System.import('css/custom.css');
+    System.import('images/image.png!image');
+    System.import('data/config.json');
+    System.import('data/data.txt!text');
+</script>
+----
+
+[.topic]
+== Potencjalne problemy wykorzystania module loaderów
+
+[.incremental]
+* Kompresja, transpiling, pre-procesing - zmieniają źródło skryptu
+* Częsty brak rozpoznawania skryptów nie załadowanych za pomocą tagu <script>
+* Problematyczna kolejność ładowania modułów - zależna od narzędzia
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
