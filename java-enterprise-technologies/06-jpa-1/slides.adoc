@@ -1,0 +1,302 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Technologie Java Enterprise Persistence API #1
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== JPA - wprowadzenie
+
+[.incremental]
+* Mapowanie obiektowo-relacyjne
+* JDBC i Connection Pool
+* Definiowanie encji
+* Entity Manager
+* Transakcje
+
+[.topic]
+== JPA - relacje i walidacja
+
+[.incremental]
+* One-to-one
+* One-to-many
+* Many-to-one
+* Many-to-many
+* Bean validation w JPA
+
+[.topic]
+== JPA - wyszukiwanie
+
+[.incremental]
+* Java Persistence Query Language
+* Critera API
+
+[.topic]
+== Dlaczego warto uczyć się JPA?
+
+image::why-01.png[Ogłoszenie o pracę, 600, role="middle"]
+
+[.topic]
+== Dlaczego warto uczyć się JPA?
+
+image::why-02.png[Ogłoszenie o pracę, 600, role="middle"]
+
+[.topic]
+== JPA - Entity requirements
+
+[.incremental]
+* @javax.persistence.Entity
+* Public or protected, no-argument constructor (bean!)
+* Not final (class and methods)
+
+[.topic]
+== JPA - Entity requirements
+
+* Persistence instance variables must be declared private, protected or package-private and can be accessed directly only by the entity class methods. Clients must access the entity state through accessor or business methods.
+
+[.topic]
+== JPA - Persistence fields
+
+[.incremental]
+* Java primitive types
+* java.lang.String
+* Other serializable types (including wrappers of primitive types, BigInteger/BigDecimal, Date/Calendar/Date/Time)
+* User serializable types
+
+[.topic]
+== JPA - Persistence fields
+
+[.incremental]
+* Enumerated types
+* Other entities and/or collections of entities
+* Embeddable classes
+
+[.topic]
+== JPA - Primary Key
+
+[.incremental]
+* Typy prymitywne
+* java.lang.String
+* Typy serializowalne
+* Typy wyliczeniowe
+* Inne encje lub ich kolekcje
+* Klasy embed
+
+[.topic]
+== JPA - Primary Key
+
+[.incremental]
+* @javax.persistence.Id
+* @javax.persistence.GeneratedValue:
+** SEQUENCE
+** AUTO
+** *IDENTITY*
+** TABLE
+
+[.topic]
+== HSQLDB
+
+[.incremental]
+* HyperSQL Database
+* Baza in-memory
+* Wystarczy jeden plik JAR (!)
+* Tryb serwera oraz prostego klienta (wykonanego w Swing'u)
+
+[.topic.source]
+== HSQLDB - uruchomienie
+
+[source,shell]
+----
+java -cp hsqldb.jar org.hsqldb.server.Server --database.0.mem:my-db --dbname.0 workkdb
+----
+
+[source,shell]
+----
+java -cp hsqldb.jar org.hsqldb.util.DatabaseManagerSwing --url jdbc:hsqldb:hsql://localhost/workdb
+----
+
+[.topic.source]
+== HSQLDB - uruchomienie (Maven)
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.hsqldb</groupId>
+    <artifactId>hsqldb</artifactId>
+    <version>2.3.2</version>
+</dependency>
+----
+
+[.topic.source]
+== HSQLDB - uruchomienie (Maven)
+
+[source,shell]
+----
+mvn exec:java –Pserver
+----
+
+[source,shell]
+----
+mvn exec:java –Pclient
+----
+
+[.topic]
+== JDBC Connection Pool
+
+image::jdbc-connection-pool-1.png[JDBC Connection Pool #1, 650, role="middle"]
+
+[.topic]
+== JDBC Connection Pool
+
+image::jdbc-connection-pool-2.png[JDBC Connection Pool #2, 650, role="middle"]
+
+[.topic]
+== JDBC Connection Pool
+
+image::jdbc-connection-pool-3.png[JDBC Connection Pool #3, 650, role="middle"]
+
+[.topic]
+== JDBC Resource
+
+image::jdbc-resource.png[JDBC Resource, 650, role="middle"]
+
+[.topic]
+== persistence.xml
+
+[.incremental]
+* Umieszczamy go w katalogu src/main/resources/META-INF
+* Możliwe tworzenie wielu jednostek persystencji - komunikacja z wieloma bazami danych w jednej aplikacji
+
+[.topic.source]
+== persistence.xml
+
+[source,xml]
+----
+<persistence>
+    <persistence-unit name="MessagesManagement">
+        <jta-data-source>jdbc/hsqlapps</jta-data-source>
+        <class>pl.edi.ug.messageboard.domain.Message</class>
+    </persistence-unit>
+</persistence>
+----
+
+[.topic]
+== Entity Manager
+
+[.incremental]
+* Przy jego użyciu wykonujemy wszystkie operacji komunikacji z bazą:
+** tworzenie
+** usuwanie
+** edycja
+** wyszukiwanie
+* javax.persistence.EntityManager
+
+[.topic]
+== Entity Manager
+
+* Dwa rodzaje:
+** container-managed (@javax.persistence.PersistenceContext)
+** application-managed (@javax.persistence.PersistenceUnit)
+
+[.topic.source]
+== persistence.xml - properties
+
+[source,xml]
+----
+<persistence>
+    <persistence-unit name="MessagesManagement">
+        ...
+
+        <properties>
+            <property name="javax.persistence.schema-generation.database.action"
+                      value="drop-and-create"/> <1>
+
+            <property name="javax.persistence.sql-load-script-source"
+                                  value="META-INF/sql/load.sql" /> <2>
+        </properties>
+    </persistence-unit>
+</persistence>
+----
+<1> Sposób generowania schematu bazy danych przy uruchomieniu (deployment)
+<2> Załadowanie danych z pliku SQL przed uruchomieniem aplikacji
+
+[.topic]
+== Data i kalendarz
+
+[.incremental]
+* Wymagane dla klas:
+** java.util.Date
+** java.util.Calendar
+* Automatyczne dla klas:
+** java.sql.Date
+** java.sql.Calendar
+** java.sql.Timestamp
+
+[.topic]
+== Temporal field
+
+[.incremental]
+* Mówi o tym w jaki sposób ma być traktowane dane pole w bazie danych
+* @javax.persistence.Temporal:
+** javax.persistence.DATE
+** javax.persistence.TIME
+** javax.persistence.TIMESTAMP
+
+[.topic]
+== Lifecycle events
+
+[.incremental]
+* @PrePersist
+* @PostPersist
+* @PostLoad
+* @PreUpdate (EntityManager)
+* @PostUpdate
+* @PreRemove (EntityManager)
+* @PostRemove
+
+[.topic.source]
+== Lifecycle events
+
+[source,java]
+----
+@Entity
+public class Message implements Serializable {
+    // ....
+
+    @Temporal(TemporalType.DATE)
+    private Date createdAt;
+
+    @Temporal(TemporalType.DATE)
+    private Date modifiedAt;
+
+    // ....
+
+    @PrePersist
+    void createdAt() {
+        this.createdAt = new Date();
+        this.modifiedAt = this.createdAt;
+    }
+
+    @PreUpdate
+    void modifiedAt() {
+        this.modifiedAt = new Date();
+    }
+}
+----
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
