@@ -1,0 +1,198 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+=  Programowanie w Javie Laboratorium #1
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== O mnie
+
+[.incremental]
+Z wykształcenia:: fizyk
+Z zawodu:: Development Team Leader w firmie Solwit S.A. / kontrybutor Open Source / freelancer
+Z zamiłowania:: wykładowca / prelegent / szkoleniowiec
+
+[.topic]
+== Wykład - materiały
+
+*Literatura:*
+[.incremental]
+* Bentrand Meyer "Programowanie zorientowane obiektowo"
+* Bruce Eckel "Thinking in Java"
+* Katy Sierra, Bert Bates "OCA/OCP Java SE 7 Programmer I & II Study Guide"
+
+[.text-center]
+icon:github[] http://smoczysko.github.io/lectures/itj
+
+[.topic]
+== Ustalenia
+[.incremental]
+* Pytania mile widziane!
+* Konsultacje po zajęciach - informacja odpowiednio przed (np. mailowo)
+* Slajdy to tak naprawdę ściągawka dla wykładowcy ;)
+
+[.topic]
+== Organizacja zajęć
+
+[.incremental]
+* 3 spotkania
+* Każde spotkanie to 4h zegarowe (z 1 przerwa 15 minut w trakcie)
+* Pracujemy w grupach
+* Na każdych laboratoriach obowiązuje lista obecności
+
+[.topic]
+== Plan gry
+
+[.incremental]
+* Tworzymy gre Wisielec (Hangman)
+* Na każdych zajęciach pracujemy nad kolejnymi jej wersjami (kosnola, GUI, archiwum etc)
+
+[.topic]
+== Hangman - etap 1
+
+[.incremental]
+* Aplikacja konsolowa
+* Wczytywanie nazwy gracza, ilości dozwolonych prób oraz słów
+* Losowanie słowa do odgadnięcia
+* Zbieranie literek i pokazywanie wyniku
+
+[.topic]
+== Hangman - etap 2
+
+[.incremental]
+* Wprowadzenie kolekcji i interfejsów
+* Zapisywanie słów do pliku
+* Uruchamianie gry z bazą słów
+* Zapisywanie przebiegu każdej gry
+* Możliwość kontynuowania gry po zwycięstwie
+
+[.topic]
+== Hangman - etap 3
+
+[.incremental]
+* Graficzny interfejs aplikacji
+* Operacje na wątkach (konieczne w SWT)
+* ... :)
+
+[.topic]
+== Konstrukcja projektu
+
+[.incremental]
+* Standardowy projekt Java (konwencja katalogów)
+* Gradle(w) jako narzędzie do budowania aplikacji
+* Tworzenie pliku wynikowego - JAR
+
+[.topic.source]
+== Klasa Main
+
+[source,java]
+----
+package pl.edu.pg.ftims.hangman;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello from Hangman");
+    }
+}
+----
+
+[.topic.source]
+== Budowanie i uruchamianie projektu
+
+[source,xml]
+----
+./gradlew assemble<1>
+
+gradlew.bat assemble<2>
+
+
+
+java -jar build/libs/<nazwa>.jar
+----
+<1> Linux/Mac OS X
+<2> Windows
+
+
+[.topic.source]
+== Generator liczb losowych
+
+[source,java]
+----
+package pl.edu.pg.ftims.hangman.utils;
+
+import java.util.Random;
+
+public class Utils {
+    public static int randInt(int min, int max) {
+        Random rand = new Random();
+
+        return rand.nextInt((max - min) + 1) + min;
+    }
+}
+----
+
+[.topic.source]
+== Obsługa konsoli
+
+[source,java]
+----
+package pl.edu.pg.ftims.hangman;
+
+public class Main {
+    public static void main(String[] args) {
+        Console console = System.console();
+
+        if (console == null) {
+            System.out.println("Unable to fetch console");
+            return;
+        }
+
+        console.printf("Some text...\n");
+
+        String line = console.readLine();
+    }
+}
+----
+
+[.topic.source]
+== Usuwanie znaków z konsoli
+
+[source,java]
+----
+package pl.edu.pg.ftims.hangman;
+
+public class Main {
+    public static void main(String[] args) {
+        Console console = System.console();
+
+        if (console == null) {
+            System.out.println("Unable to fetch console");
+            return;
+        }
+
+        console.printf("Some text...");
+
+        console.printf("\u0008");<1>
+        console.printf("\u0008");<1>
+        console.printf("\u0008");<1>
+    }
+}
+----
+<1> \u0008 to specjalny znak Backspace; należy pamiętać, że usuwanie działa tylko w bierzącej linii (tam gdzie jest kursor)!
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
