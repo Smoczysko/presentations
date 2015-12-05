@@ -37,7 +37,7 @@ Z zamiłowania:: wykładowca / prelegent / szkoleniowiec
 * Mozilla Developer Network
 
 [.text-center]
-icon:github[] http://smoczysko.github.io/lectures/rui
+icon:github[] http://smoczysko.github.io/#/courses/rui
 
 [.topic]
 == Ustalenia

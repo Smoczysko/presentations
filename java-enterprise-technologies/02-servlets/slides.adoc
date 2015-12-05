@@ -31,7 +31,7 @@ Z zamiłowania:: wykładowca / prelegent / szkoleniowiec
 
 *Slajdy:*
 
-icon:github[] http://smoczysko.github.io/lectures/jet
+icon:github[] http://smoczysko.github.io/#/courses/jet
 
 *Bazowa aplikacja:*
 
