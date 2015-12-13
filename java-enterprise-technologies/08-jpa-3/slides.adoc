@@ -1,0 +1,148 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Technologie Java Enterprise Persistence API #3
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== JPQL
+[.incremental]
+* *J* ava *P* ersistence *Q* uery *L* anguage
+* Pozwala wykonywać zapytania bazodanowe w pseudo-SQL'owym języku
+* Wsparcie dla natywnych query
+* Dostępne operatory JOIN (ale z pewnymi ograniczeniami)
+
+[.topic]
+== Critera API
+
+[.incremental]
+* Deklaratywna forma JPQL
+* Posiada te same możliwości co JPQL
+* Przyjemniejsze dla niektórych developerów (kwestia gustu)
+
+[.topic.source]
+== Paginacja
+
+[source,java]
+----
+@Stateless
+public class MessageStorageService {
+    @PersistenceContext
+    EntityManager manager;
+
+    public List<Message> getMessages(int offset, int limit){
+        return manager.createNamedQuery("message.all").
+                setFirstResult(offset).
+                setMaxResults(limit).
+                getResultList();
+    }
+
+    public Long getCount() {
+        return (Long) manager.createQuery("select count(m) from Message m")
+                    .getSingleResult();
+    }
+}
+----
+
+[.topic]
+== Podstawowe zagadnienia
+
+[.incremental]
+* Wyszukiwanie po wartości
+* Named queries
+* Wyszukiwanie po dacie
+* Wyszukiwanie po połączonej tabeli
+
+[.topic]
+== Pokazywanie zapytania
+
+[.incremental]
+* Inna konfiguracja dla każdego provider'a
+* Domyślny provider GlassFish 4.X to EclipseLink
+* Inna konfiguracja w różnych wersjach
+
+[.topic.source]
+== Pokazywanie zapytania
+
+[source,xml]
+----
+<persistence>
+  <persistence-unit name="MessagesManagement">
+    <jta-data-source>jdbc/hsqlapps</jta-data-source>
+
+    <properties>
+      <property name="javax.persistence.schema-generation.database.action"
+                 value="drop-and-create"/>
+      <property name="javax.persistence.sql-load-script-source"
+                value="META-INF/sql/load.sql" />
+
+      <property name="eclipselink.logging.level" value="FINE"/>
+      <property name="eclipselink.logging.level.sql" value="FINE"/>
+      <property name="eclipselink.logging.parameters" value="true"/>
+    </properties>
+  </persistence-unit>
+</persistence>
+----
+
+[.topic]
+== Funkcje JPQL
+
+[.incremental]
+* CONCAT(string1, string2)
+* SUBSTRING(string, startIndex, length)
+* LOWER(string)
+* UPPER(string)
+* LENGTH(string)
+
+[.topic]
+== Funkcje JPQL
+
+[.incremental]
+* ABS(number)
+* SQRT(number)
+* MOD(number, divisor)
+* CURRENT_DATE
+* CURRENT_TIME
+* CURRENT_TIMESTAMP
+
+[.topic.source]
+== Query execution
+
+[source,java]
+----
+@Stateless
+public class MessageStorageService {
+    @PersistenceContext
+    EntityManager manager;
+
+    public void deleteAllMessagesByAuthor(String author) {
+        em.createQuery ("DELETE FROM Message m WHERE m.author = :author")
+            .setParameter ("author", author)
+            .executeUpdate();
+    }
+
+    public void updateMessagesAuthorName(String author, String newName) {
+        em.createQuery ("UPDATE Message m SET m.author = :newName WHERE m.author = :author")
+            .setParameter("author", author)
+            .setParameter("newName", newName)
+            .executeUpdate();
+    }
+}
+----
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
