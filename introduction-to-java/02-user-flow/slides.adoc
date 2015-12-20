@@ -1,0 +1,73 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: stormy-jm
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+=  Programowanie w Javie Laboratorium #2
+Łukasz Rybka ; Gdańsk 2015
+
+[.topic]
+== Zaktualizowany plan gry
+
+[.incremental]
+* Tworzymy gre Wisielec (Hangman)
+* Na każdych zajęciach pracujemy nad kolejnymi jej wersjami (kosnola, GUI, archiwum etc)
+
+[.topic]
+== Hangman - etap 1
+
+[.incremental]
+* Aplikacja konsolowa
+* Wczytywanie nazwy gracza
+* Wczytywanie ilości dozwolonych prób
+* Wprowadzenie do enkapsulacji
+
+[.topic]
+== Hangman - etap 2
+
+[.incremental]
+* Pobieranie pojedynczego slowa do odgadniecia
+* Pokazywanie wprowadzonego slowa w postaci znakow "_"
+* Wprowadzenie maksymalnie 5 slow (wybór użytkownika)
+* Losowanie słowa do odgadnięcia
+
+[.topic]
+== Hangman - etap 3
+
+[.incremental]
+* Rozpoczęcie gry (wprowadzanie literek, zliczanie błędów)
+* Pytanie o chęć dalszej gry
+
+[.topic]
+== Zasady zalicenia laboratoriów
+
+[.incremental]
+* Obecność obowiązkowa na 2 z 3 zajęć
+* Osoby bez wymaganej obecności zostaną zgłoszeni do prowadzącego przedmiot
+* Osoby ze 100% frekwencją - zwolnienie (opcjonalne) z zaliczenia z oceną 3 z przedmiotu
+* Osoby z 1 nieobecnością lub aspirujące na ocenę wyższą niż 3 - zaliczenie (projekt)
+
+[.topic]
+== Zaliczenie (projekt)
+
+[.incremental]
+* Zaliczenie odbędzie się na ostatnich zajęciach (tj. 9 stycznia)
+* Ostatnie 1,5h zajęć poświęcone zostanie zaliczeniu
+* Do wykonania będzie prosta aplikacja
+* Praca samodzielna
+* Zakres materiału uzależniony od przerobionego materiału na laboratoriach
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
