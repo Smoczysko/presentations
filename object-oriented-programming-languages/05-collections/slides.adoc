@@ -3,8 +3,8 @@
 :imagesdir: images
 :source-highlighter: highlightjs
 :language: no-highlight
-:dzslides-style: stormy-jm
-:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
 :dzslides-transition: fade
 :dzslides-highlight: monokai
 :experimental:
@@ -16,7 +16,7 @@
 :linkattrs:
 
 = Obiektowe Języki Programowania Kolekcje
-Łukasz Rybka ; Gdańsk 2015
+Łukasz Rybka ; Gdańsk 2016/17
 
 [.topic]
 == Co to są tablice?
@@ -322,7 +322,7 @@ public class Main {
         strings.add("B");
         strings.add("C");
 
-        strings.add(0. "F");
+        strings.add(0, "F");
 
         System.out.println("Size: " + strings.size());
         System.out.println(strings);
@@ -346,7 +346,7 @@ public class Main {
         strings.add("B");
         strings.add("C");
 
-        strings.add(0. "F");
+        strings.add(0, "F");
 
         System.out.println("Size: " + strings.size());
         System.out.println(strings);

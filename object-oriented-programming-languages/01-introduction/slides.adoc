@@ -3,8 +3,8 @@
 :imagesdir: images
 :source-highlighter: highlightjs
 :language: no-highlight
-:dzslides-style: stormy-jm
-:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
 :dzslides-transition: fade
 :dzslides-highlight: monokai
 :experimental:
@@ -16,14 +16,14 @@
 :linkattrs:
 
 = Obiektowe Języki Programowania Wprowadzenie
-Łukasz Rybka ; Gdańsk 2015
+Łukasz Rybka ; Gdańsk 2016/17
 
 [.topic]
 == O mnie
 
 [.incremental]
 Z wykształcenia:: fizyk
-Z zawodu:: projektant-programista / kontrybutor Open Source / freelancer
+Z zawodu:: Team Leader / frontend developer / freelancer
 Z zamiłowania:: wykładowca / prelegent / szkoleniowiec
 
 [.topic]
@@ -36,7 +36,7 @@ Z zamiłowania:: wykładowca / prelegent / szkoleniowiec
 * Katy Sierra, Bert Bates "OCA/OCP Java SE 7 Programmer I & II Study Guide"
 
 [.text-center]
-icon:github[] http://smoczysko.github.io/#/courses/oopl
+icon:github[] http://dragonia.org.pl/courses/oopl
 
 [.topic]
 == Ustalenia
@@ -44,7 +44,8 @@ icon:github[] http://smoczysko.github.io/#/courses/oopl
 * Pytania mile widziane!
 * Konsultacje po zajęciach - informacja odpowiednio przed (np. mailowo)
 * Slajdy to tak naprawdę ściągawka dla wykładowcy ;)
-* Wykład nie jest obowiązkowy...
+* Nie toleruję przeszkadzania...
+* ... a wykład nie jest obowiązkowy!
 
 [.topic]
 == Organizacja zajęć
@@ -52,17 +53,24 @@ icon:github[] http://smoczysko.github.io/#/courses/oopl
 [.incremental]
 * Wykład: 7 spotkań po 2h (14h)
 * Laboratoria: 15 spotkań po 4h tygodniowo (60h)
-* Egzamin: ostatni "poniedziałek" semestru o godzinie 16:00 w sali 221 GG
+* Egzamin: ostatni "???" semestru o godzinie ??? w sali ???
+
+[.topic]
+== Konsultacje
+
+[.incremental]
+* Odbywają się po każdych zajęciach przez 1h w sali ??? Gmach B
+* Po zakończeniu wykładów konsultacje możliwe po wcześniejszej prośbie mailowej
 
 [.topic]
 == Harmonogram
 
 [.incremental]
-* wykłady do 2 listopada
-* 9 października - dodatkowy wykład (opcjonalny)
-* 19 stycznia - ostateczny termin dostarczenia projektu
-* 25 stycznia - egzamin ustny
-* 26 stycznia - możliwość poprawienia jednego kolokwium
+* Wykłady do ??? listopada
+* ??? października - brak zajęć
+* ??? stycznia - ostateczny termin dostarczenia projektu
+* ??? stycznia - egzamin ustny
+* ??? stycznia - możliwość poprawienia jednego kolokwium
 
 [.topic]
 == Zaliczenie laboratoriów
@@ -70,16 +78,23 @@ icon:github[] http://smoczysko.github.io/#/courses/oopl
 [.incremental]
 * 5 mini-kolokwiów w trakcie laboratoriów (każde za 6pkt)
 * 1 projekt za 30 pkt
-* wymagane zdobycie przynajmniej 31 pkt
+* Wymagane zdobycie przynajmniej 31 pkt
 
 [.topic]
 == Zaliczenie przedmiotu
 
 [.incremental]
-* zaliczenie laboratoriów (31/60 pkt) jest wymogiem podejścia do egzaminu
-* egzamin w formie ustnej za 20 pkt
-* zdobycie powyżej 50 punktów upoważnia do zwolnienia z egzaminu – z oceną 3+
+* Zaliczenie laboratoriów (31/60 pkt) jest wymogiem podejścia do egzaminu
+* Egzamin w formie ustnej za 20 pkt (3 pytania z wykładów i laboratoriów)
+* Zdobycie powyżej 50 punktów upoważnia do zwolnienia z egzaminu – z oceną 3+
 
+[.topic]
+== Egzamin ustny
+
+[.incremental]
+* Jeden termin w sesji podstawowej
+* Drugi termin w sesji poprawkowej
+* *Nie będzie kolejnych terminów!*
 
 [.topic]
 == Przelicznik puntky -> ocena końcowa
@@ -96,28 +111,27 @@ icon:github[] http://smoczysko.github.io/#/courses/oopl
 
 [.incremental]
 * Osoby z zaliczonymi laboratoriami także realizują projekt
-* Projekt jest podstawą do egzaminu ustnego, nie podglega ocenie
-* Wynik procentowy jest przeliczany na punkty z lab + projektu (max 60 pkt)
-* Możliwe jest realizowanie ponowne programu laboratoriów
+* Możliwe jest ponowne realizowanie programu laboratoriów (liczy się nowszy wynik!)
 
 [.topic]
 == Zakres wykładów
 
 [.incremental]
-* wprowadzenie do ekosystemu Java/JVM
-* klasy i obiekty
-* dziedziczenie
-* polimorfizm
-* kolekcje
-* obsługa wyjątków
+* Wprowadzenie do ekosystemu Java/JVM
+* Apache Maven i struktura projektu
+* Klasy i obiekty
+* Dziedziczenie
+* Polimorfizm
+* Kolekcje
+* Obsługa wyjątków
 
 [.topic]
 == O czym nie będziemy mówić
 
 [.incremental]
-* mechanizmy analogiczne do innych języków (jak np. operacje bitowe)
-* zarządzanie pamięcią (Garbage Collector) - w szczegółach
-* instrukcje sterujące, pętle itp.
+* Mechanizmy analogiczne do innych języków (jak np. operacje bitowe)
+* Zarządzanie pamięcią (Garbage Collector) - w szczegółach
+* Instrukcje sterujące, pętle itp.
 * ...
 
 [.topic]
@@ -126,6 +140,7 @@ icon:github[] http://smoczysko.github.io/#/courses/oopl
 [.incremental]
 * Java Standard Edition Development Kit (Java SE JDK) - 8u60
 * Eclipse IDE for Java Developers
+* Intellij IDEA
 * Konsola + edytor tekstowy
 
 [.topic]
@@ -202,7 +217,7 @@ public class Main {
 == Kilka podstawowych informacji
 
 [.incremental]
-* Plik ma tę samą nazwę co klasa
+* Plik ma tę samą nazwę co klasa publiczna
 * Uruchamiamy program przez uruchomienie klasy z funkcją main(String[] args)
 * Pakiety - "nie wszystko w jednym worku"!
 * Dokumentujemy kod w kodzie (javadoc)
@@ -287,6 +302,103 @@ public String sayHello() {
     return message;
 }
 ----
+
+[.topic]
+== Apache Maven
+
+[.incremental]
+* Project Management Tool
+* Wspomaga budowanie (kompilację, linkowanie, ...), testowanie, raportowanie, dokumentację i wiele więcej
+* Zarządza zależnościami projektu
+* Pozwala na zarządzanie projektami o skomplikowanej strukturze
+
+[.topic]
+== Konfiguracja projektu
+
+[.incremental]
+
+* Centralne miejsce informacji i konfiguracji projektu - plik POM (pom.xml)
+* Zarządzanie przez konwencję - odpowiednia struktura katalogów i plików
+
+[.topic]
+== Struktura katalogów i plików
+
+image::project-structure.png[Struktura projektu, 500, role="middle"]
+
+[.topic]
+== Plik pom.xml
+
+[.incremental]
+* POM - Project Object Model
+* Zawiera podstawowe informacje o projekcie i jego konfiguracji
+* Wymagane informacje:
+** *modelVersion* (4.0.0 – oznacza build zgodny z Maven 2)
+** *groupId* – ID grupy, do którego należy projekt (zazwyczaj pokrywa się z pakietem)
+** *artifactId* – ID artefaktu (projektu)
+** *version* - bieżąca wersja projektu
+
+[.topic]
+== Minimalistyczny plik pom.xml
+
+image::minimalistic-pom-file.png[Minimalistyczny plik pom.xml, 500, role="middle"]
+
+[.topic]
+== Archetypy
+
+[.incremental]
+* Gotowe do użycia projekty
+* Automatyczne generowanie i podstawowa konfiguracja
+* Ogromna ilość (setki!) gotowych i dostępnych archetypów
+
+[.topic]
+== Najpopularniejsze archetypy
+
+[.incremental]
+* *maven-archetype-quickstart* - prosty i podstawowy szkielet projektu z odpowiednią strukturą katalogów
+* *maven-archetype-webapp* - aplikacja webowa z podstawową konfiguracją (w plikach XML)
+* *maven-archetype-j2ee-simple* - aplikacja JEE z podziałem na projekty i komponenty (w tym EJB w starej konfiguracji)
+
+[.topic.source]
+== Najprostszy program Java (Main.java)
+
+[source,xml]
+----
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DgroupId=pl.edu.pg.ftims -DartifactId=oopl<1>
+
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DgroupId=pl.edu.pg.ftims -DartifactId=oopl<2>
+----
+<1> generowanie projektu na bazie archetypu wybranego z listy
+
+<2> generowanie projektu na bazie konkretnego archetypu
+
+[.topic.source]
+== Budowanie i uruchomienie projektu
+
+[source,xml]
+----
+mvn package<1>
+
+java -cp target/oopl-1.0-SNAPSHOT.jar pl.edu.pg.ftims.App<2>
+----
+<1> zbudowanie projektu
+
+<2> uruchomienie
+
+[.topic]
+== Cykl budowania aplikacji
+
+[.incremental]
+* Jasno określnone (i powtarzalne) reguły
+* Wystarczy znajomość zaledwie kilku komend do efektywnego budowania aplikacji
+* Wbudowane cykle budowania:
+** *default* - deployment aplikacji
+** *clean* - czyszczenie projektu
+** *site* - tworzenie dokumentacji
+
+[.topic]
+== Domyślny cykl życia projektu Maven'owego
+
+image::maven-build-default-lifecycle.png[Domyślny cykl życia, 500, role="middle"]
 
 == ! questions
 image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]

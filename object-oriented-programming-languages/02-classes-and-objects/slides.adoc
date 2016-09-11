@@ -3,8 +3,8 @@
 :imagesdir: images
 :source-highlighter: highlightjs
 :language: no-highlight
-:dzslides-style: stormy-jm
-:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
 :dzslides-transition: fade
 :dzslides-highlight: monokai
 :experimental:
@@ -16,7 +16,7 @@
 :linkattrs:
 
 = Obiektowe Języki Programowania Klasy i obiekty
-Łukasz Rybka ; Gdańsk 2015
+Łukasz Rybka ; Gdańsk 2016/17
 
 [.topic]
 == Podstawowe pytania
@@ -91,15 +91,16 @@ public class Human {
 ----
 
 [.topic]
-== POJO
+== Java Bean
 
 [.incremental]
-* POJO - Plain Old Java Object
-* Klasa obiektów przetrzymujących jedynie proste informacje
-* Łatwe do przetumaczenia na inne typy oraz do serializacji
+* Java Bean - konwencja reużywalnych komponentów w Javie
+* Jest serializowalna
+* Posiada bezargumentowy konstruktor
+* Dostęp do (prywatnych) zmiennych przez settery i gettery
 
 [.topic.source]
-== Przykład prostej klasy - poprawny
+== Poprawny przykład prostej klasy
 
 [source,java]
 ----
@@ -143,13 +144,13 @@ package (domyślny):: dostęp do danej klasy/metody/pola mają jedynie klasy z t
 private:: nikt poza samą klasą nie ma dostępu do danej klasy/pola
 
 [.topic]
-== Konstructory
+== Constructors
 
 [.incremental]
-* Służą do tworzenia obiektów - wywoływane przy słowie kluczowym _this_
+* Służą do tworzenia obiektów - wywoływane przy słowie kluczowym _new_
 * Jeżeli nie zdefiniujemy żadnego konstruktora - kompilator zrobi to za nas!
-* Istnieje możliwość przeciążania konstruktorów przez parametru (overloading)
-* Kiedy zdefiniujemy konstruktor z parametrami - nie możemy wywołać domyśknego!
+* Istnieje możliwość przeciążania konstruktorów przez parametry (overloading)
+* Kiedy zdefiniujemy konstruktor z parametrami - domyślny nie będzie istnieć!
 
 [.topic.source]
 == Klasa z wieloma konstruktorami

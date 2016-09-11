@@ -3,8 +3,8 @@
 :imagesdir: images
 :source-highlighter: highlightjs
 :language: no-highlight
-:dzslides-style: stormy-jm
-:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
 :dzslides-transition: fade
 :dzslides-highlight: monokai
 :experimental:
@@ -16,7 +16,7 @@
 :linkattrs:
 
 = Obiektowe Języki Programowania Dziedziczenie
-Łukasz Rybka ; Gdańsk 2015
+Łukasz Rybka ; Gdańsk 2016/17
 
 [.topic]
 == SOLID
