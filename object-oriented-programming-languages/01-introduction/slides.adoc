@@ -70,8 +70,8 @@ icon:github[] http://dragonia.org.pl/courses/oopl
 * 12 października
 * 19 października
 * 09 listopada
-* 16 listopada
 * 23 listopada
+* 30 listopada
 
 [.topic]
 == Zaliczenie laboratoriów
