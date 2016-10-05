@@ -53,24 +53,25 @@ icon:github[] http://dragonia.org.pl/courses/oopl
 [.incremental]
 * Wykład: 7 spotkań po 2h (14h)
 * Laboratoria: 15 spotkań po 4h tygodniowo (60h)
-* Egzamin: ostatni "???" semestru o godzinie ??? w sali ???
+* Egzamin: 25 stycznia od godizny 16:15 (dokładne informacje zostaną przekazane staroście drogą mailową)
 
 [.topic]
 == Konsultacje
 
 [.incremental]
-* Odbywają się po każdych zajęciach przez 1h w sali ??? Gmach B
+* Odbywają się po każdych zajęciach od 18:00 do 19:00 w sali 415 Gmachu B
 * Po zakończeniu wykładów konsultacje możliwe po wcześniejszej prośbie mailowej
 
 [.topic]
-== Harmonogram
+== Harmonogram wykładów
 
-[.incremental]
-* Wykłady do ??? listopada
-* ??? października - brak zajęć
-* ??? stycznia - ostateczny termin dostarczenia projektu
-* ??? stycznia - egzamin ustny
-* ??? stycznia - możliwość poprawienia jednego kolokwium
+* 28 września
+* 05 października
+* 12 października
+* 19 października
+* 09 listopada
+* 16 listopada
+* 23 listopada
 
 [.topic]
 == Zaliczenie laboratoriów
