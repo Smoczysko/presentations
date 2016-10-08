@@ -1,0 +1,167 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Programowanie w C++ laboratorium #1
+Łukasz Rybka ; Gdańsk 2016
+
+[.topic]
+== O mnie
+
+[.incremental]
+Z wykształcenia:: fizyk
+Z zawodu:: Development Team Leader w firmie Solwit S.A. / kontrybutor Open Source / freelancer
+Z zamiłowania:: wykładowca / prelegent / szkoleniowiec
+
+[.topic]
+== Materiały
+
+*Literatura:*
+[.incremental]
+* Bentrand Meyer "Programowanie zorientowane obiektowo"
+* Jerzy Grębosz "Symfonia C++ standard"
+
+[.text-center]
+icon:github[] http://www.dragonia.org.pl/#/courses/itcpp
+
+[.topic]
+== Ustalenia
+[.incremental]
+* Pytania mile widziane!
+* Konsultacje po zajęciach w sali 415 Gmachu B (po wcześniejszej zapowiedzi na przykład mailowo)
+* Slajdy zawierają jedynie orientacyjne informacje, cała praca w IDE
+
+[.topic]
+== Organizacja zajęć
+
+[.incremental]
+* 4 spotkania
+* Pracujemy indywidualnie
+* Na każdych laboratoriach obowiązuje lista obecności
+
+[.topic]
+== Przybliżony zakres laboratoriów
+
+[.incremental]
+* Ogólna struktura pliku - preprocesor, biblioteki, program główny
+* Słowa kluczowe
+* Typy zmiennych
+* Bloki sterujące
+* Tablice
+* Funkcje
+
+[.topic]
+== Przybliżony zakres laboratoriów
+
+[.incremental]
+* Wskaźniki
+* Struktury
+* Klasy - atrybuty, podprogramy, funkcje
+* Modelowanie za pomocą klas - relacja klient-dostawca, referencje
+* Dziedziczenie
+
+[.topic]
+== Przybliżony zakres laboratoriów
+
+[.incremental]
+* Polimorfizm, funkcje wirtualne
+* Generyczność
+* Zarządzanie pamięcią - dynamiczne alokowanie i sprzątanie
+* Przykład aplikacji okienkowej
+
+[.topic.source]
+== Najprostszy program w C++
+
+[source,cpp]
+----
+int main() {
+    return 0;
+}
+----
+
+[.topic.source]
+== Interakcja z konsolą
+
+[source,cpp]
+----
+#include <iostream>
+
+int main() {
+    std::cout << "Hello students!\nIt's so good you're here!" << std::endl;
+
+    return 0;
+}
+----
+
+[.topic.source]
+== Przestrzenie nazw
+
+[source,cpp]
+----
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    cout << "Hello students!" << endl << "It's so good you're here!" << endl;
+
+    return 0;
+}
+----
+
+[.topic]
+== Co dzieje się pod spodem?
+
+[.incremental]
+* kompilacja
+* linkowanie
+* preprocesor
+
+[.topic]
+== Typy i ich deklaracja
+
+[.incremental]
+* Deklaracja - informuje kompilator, że dana nazwa reprezentuje obiekt jakiegoś typu, ale nie rezerwuje dla niego miejsca w pamięci
+* Definicja - dodatkowo rezerwuje miejsce. Definicja jest miejscem w programie, gdzie powołuje się obiekt do życia
+
+[.topic]
+== Typy i ich możliwe wartości
+
+image::datatypes.png[Types of data in C++, 700, role="middle"]
+
+[.topic]
+== Dalsze tematy
+
+[.incremental]
+* zasięg zmiennych
+* przyszłanianie zmiennych
+* podstawowe operatory
+* funkcje matematyczne
+* pętle
+
+[.topic]
+== Dalsze tematy
+
+[.incremental]
+* funkcje i ich argumenty
+* wskaźniki i referencje
+* tablice
+* tablice o dynamicznym rozmiarze
+* pojęcie klasy i obiektu
+
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
