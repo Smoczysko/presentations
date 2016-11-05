@@ -1,0 +1,58 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Programowanie w C++ projekt
+Łukasz Rybka ; Gdańsk 2016
+
+[.topic]
+== Zaliczenie laboratoriów
+
+[.incremental]
+* Obecność na zajęciach jest obowiązkowa
+* Podstawą zaliczenia laboratoriów jest przesłanie w terminie samodzielnie wykonanego projektu w języku C++
+* Ostateczny termin przesłania projektu to 15.01.2017r. godzina 23:59
+* *Projekty przesłane po tym terminie nie będą brane pod uwagę!*
+
+[.topic]
+== Przesłanie projektu
+
+[.incremental]
+* Projekt powinien zostać przesłany w postaci solucji/projektu Visual Studio 2015
+* Katalog zawierający solucję archiwizujemy do pliku *ZIP* i przesyłamy jako załącznik maila
+* Mail z projektem powinien zawierać imię i nazwisko studenta
+
+[.topic]
+== Przesłanie projektu
+
+[.incremental]
+* Lista plików i katalogów, które *NIE POWINNY* zostać przesłane w paczce ZIP znajduje się pod adresem https://github.com/Smoczysko/introduction-to-c-plus-plus-laboratories/blob/master/.gitignore
+* Adres email, na który projekt ma zostać wysłany zostanie podany na ostatnim zjeździe
+
+[.topic]
+== Tematyka projektów
+
+[.incremental]
+* Temat realizowany przez projekt jest dowolny i decyduje o nim student
+* W przypadku problemów z doborem tematu - możliwa konsultacja na ostatnim zjeździe
+
+[.topic]
+== Wymagania technologiczne
+
+Wymagania zostaną zaktualizowane po ostatnim zjeździe (19.11.2016r).
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
