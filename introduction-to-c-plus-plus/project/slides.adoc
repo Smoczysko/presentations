@@ -24,7 +24,7 @@
 [.incremental]
 * Obecność na zajęciach jest obowiązkowa
 * Podstawą zaliczenia laboratoriów jest przesłanie w terminie samodzielnie wykonanego projektu w języku C++
-* Ostateczny termin przesłania projektu to 15.01.2017r. godzina 23:59
+* Ostateczny termin przesłania projektu to *15.01.2017r. godzina 23:59*
 * *Projekty przesłane po tym terminie nie będą brane pod uwagę!*
 
 [.topic]
@@ -50,9 +50,21 @@
 * W przypadku problemów z doborem tematu - możliwa konsultacja na ostatnim zjeździe
 
 [.topic]
-== Wymagania technologiczne
+== Minimalne wymagania technologiczne
 
-Wymagania zostaną zaktualizowane po ostatnim zjeździe (19.11.2016r).
+[.incremental]
+* Przynajmniej jedna metoda przeciążona
+* Wykorzystanie przynajmniej jednej z pętli (for, while lub do...while)
+* Program musi zawierać przynajmniej jeden dodatkowy plik nagłówkowy (.h) oraz zawierający implementacje (.cpp)
+
+[.topic]
+== Minimalne wymagania technologiczne
+
+[.incremental]
+* Wykorzystanie instrukcji warunkowej
+* Wypisywanie na ekranie (cout) oraz wczytywania danych z konsoli (cin)
+* Stworzenie własnej klasy i operacje na tablicy obiektów tej klasy
+
 
 == ! questions
 image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
