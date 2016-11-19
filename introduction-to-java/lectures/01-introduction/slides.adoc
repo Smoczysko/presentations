@@ -1,0 +1,341 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Programowanie w Java Wprowadzenie
+Łukasz Rybka ; Gdańsk 2016/17
+
+[.topic]
+== O mnie
+
+[.incremental]
+Z wykształcenia:: fizyk
+Z zawodu:: Development Team Leader w firmie Solwit S.A. / kontrybutor Open Source / freelancer
+Z zamiłowania:: wykładowca / prelegent / szkoleniowiec
+
+[.topic]
+== Wykład - materiały
+
+*Literatura:*
+[.incremental]
+* Bentrand Meyer "Programowanie zorientowane obiektowo"
+* *Bruce Eckel "Thinking in Java"*
+* Katy Sierra, Bert Bates "OCA/OCP Java SE 7 Programmer I & II Study Guide"
+
+[.text-center]
+icon:github[] http://dragonia.org.pl/courses/itj
+
+[.topic]
+== Ustalenia
+[.incremental]
+* Pytania mile widziane!
+* Slajdy to tak naprawdę ściągawka dla wykładowcy ;)
+* Nie toleruję przeszkadzania...
+* ... a wykład nie jest obowiązkowy!
+
+[.topic]
+== Organizacja zajęć
+
+[.incremental]
+* 15 godzin wykładu
+* 15 godzin laboratoriów
+* Zaliczenie przedmiotu: informacja na kolejnych zajęciach
+
+[.topic]
+== Konsultacje
+
+[.incremental]
+* Po wcześniejszej informacji (np. mailowo)
+* Sala 415 Gmachu B
+
+[.topic]
+== Zakres wykładów
+
+[.incremental]
+* Wprowadzenie do ekosystemu Java/JVM
+* Apache Maven i struktura projektu
+* Klasy i obiekty
+* Dziedziczenie
+* Polimorfizm
+* Kolekcje
+* Obsługa wyjątków
+
+[.topic]
+== Czego będziemy używać?
+
+[.incremental]
+* Java Standard Edition Development Kit (Java SE JDK) - 8u60
+* Eclipse Neon for Java Developers
+
+[.topic]
+== Po co to wszystko?
+
+image::tiobe-rating-2015.png[Ranking TIOBE 2015, 700, role="middle"]
+
+[.topic]
+== Co to jest JVM?
+
+[.incremental]
+Java Virtual Machine:: środowisko uruchomieniowe
+Java bytecode:: wiele języków kompilowanych do jednego kodu "maszynowego"
+Garbage Collector:: zarządzanie pamięcią
+
+[.topic]
+== JVM languages
+
+image::jvm-languages-report-1.jpg[Ranking TIOBE 2015, 650, role="middle"]
+
+[.topic.source]
+== Najprostszy program Java (Main.java)
+
+[source,java]
+----
+public class Main {<1>
+
+    public static void main(String[] args) {<2>
+
+        System.out.println("Hello World!");<3>
+
+    }
+}
+----
+<1> Definicja głównej (i jedynej) klasy w aplikacji
+<2> Definicja metody main, do której zostanie przekazane sterowanie aplikacją przy jej uruchomieniu
+<3> Instrukcja wyświetlenia na standardowe wyjście systemowe (konsolę) napisu
+
+{nbsp} +
+
+[source,xml]
+----
+javac Main.java<1>
+
+java Main<2>
+----
+<1> Kompilacja klasy (plik .java) do bytecode (plik .class)
+<2> Uruchomienie skompilowanej klasy (programu)
+
+[.topic.source]
+== Bytecode
+
+[source,java]
+----
+Compiled from "Main.java"<1>
+public class Main {
+  public Main();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+       3: ldc           #3                  // String Hello World!
+       5: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+       8: return
+}
+----
+<1> javap -c Main
+
+[.topic]
+== Kilka podstawowych informacji
+
+[.incremental]
+* Plik ma tę samą nazwę co klasa publiczna
+* Uruchamiamy program przez uruchomienie klasy z funkcją main(String[] args)
+* Pakiety - "nie wszystko w jednym worku"!
+* Dokumentujemy kod w kodzie (javadoc)
+* Podział programu na klasy według (ich) odpowiedzialności
+
+
+[.topic.source]
+== Klasa pomocnicza (DateUtils.java)
+
+[source,java]
+----
+package pl.org.dragonia.helloapp.utils;
+
+
+import java.util.Calendar;
+
+public class DateUtils {
+    private Calendar calendar;
+
+    public DateUtils() {
+        this.calendar = Calendar.getInstance();
+    }
+
+    public String sayHello() {
+        String message = "Hello, today is ";
+
+        message += calendar.get(Calendar.DAY_OF_YEAR);
+        message += " day of year!";
+
+        return message;
+    }
+}
+----
+
+
+[.topic.source]
+== Klasa pomocnicza (Main.java)
+
+[source,java]
+----
+package pl.org.dragonia.helloapp;
+
+import pl.org.dragonia.helloapp.utils.DateUtils;
+
+public class Main {
+
+    public static void main(String[] args) {
+        DateUtils dateUtils = new DateUtils();
+
+        System.out.println(dateUtils.sayHello());
+    }
+}
+----
+
+
+[.topic.source]
+== Dokumentacja kodu (Javadoc)
+
+[source,java]
+----
+/**
+ * Method saying hello and which day of year is today.
+ *
+ * @return {String} string telling which day of year is today
+ */
+public String sayHello() {
+    String message = "Hello, today is ";
+
+    int dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+    switch (dayOfYear) {
+        case 1:
+            message += dayOfYear + "st";
+        break;
+        // ...
+        default:
+            message += dayOfYear + "th";
+        break;
+    }
+
+    message += " day of year!";
+
+    return message;
+}
+----
+
+[.topic]
+== Apache Maven
+
+[.incremental]
+* Project Management Tool
+* Wspomaga budowanie (kompilację, linkowanie, ...), testowanie, raportowanie, dokumentację i wiele więcej
+* Zarządza zależnościami projektu
+* Pozwala na zarządzanie projektami o skomplikowanej strukturze
+
+[.topic]
+== Konfiguracja projektu
+
+[.incremental]
+
+* Centralne miejsce informacji i konfiguracji projektu - plik POM (pom.xml)
+* Zarządzanie przez konwencję - odpowiednia struktura katalogów i plików
+
+[.topic]
+== Struktura katalogów i plików
+
+image::project-structure.png[Struktura projektu, 500, role="middle"]
+
+[.topic]
+== Plik pom.xml
+
+[.incremental]
+* POM - Project Object Model
+* Zawiera podstawowe informacje o projekcie i jego konfiguracji
+* Wymagane informacje:
+** *modelVersion* (4.0.0 – oznacza build zgodny z Maven 2)
+** *groupId* – ID grupy, do którego należy projekt (zazwyczaj pokrywa się z pakietem)
+** *artifactId* – ID artefaktu (projektu)
+** *version* - bieżąca wersja projektu
+
+[.topic]
+== Minimalistyczny plik pom.xml
+
+image::minimalistic-pom-file.png[Minimalistyczny plik pom.xml, 500, role="middle"]
+
+[.topic]
+== Archetypy
+
+[.incremental]
+* Gotowe do użycia projekty
+* Automatyczne generowanie i podstawowa konfiguracja
+* Ogromna ilość (setki!) gotowych i dostępnych archetypów
+
+[.topic]
+== Najpopularniejsze archetypy
+
+[.incremental]
+* *maven-archetype-quickstart* - prosty i podstawowy szkielet projektu z odpowiednią strukturą katalogów
+* *maven-archetype-webapp* - aplikacja webowa z podstawową konfiguracją (w plikach XML)
+* *maven-archetype-j2ee-simple* - aplikacja JEE z podziałem na projekty i komponenty (w tym EJB w starej konfiguracji)
+
+[.topic.source]
+== Najprostszy program Java (Main.java)
+
+[source,xml]
+----
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DgroupId=pl.edu.pg.ftims -DartifactId=oopl<1>
+
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DgroupId=pl.edu.pg.ftims -DartifactId=oopl<2>
+----
+<1> generowanie projektu na bazie archetypu wybranego z listy
+
+<2> generowanie projektu na bazie konkretnego archetypu
+
+[.topic.source]
+== Budowanie i uruchomienie projektu
+
+[source,xml]
+----
+mvn package<1>
+
+java -cp target/oopl-1.0-SNAPSHOT.jar pl.edu.pg.ftims.App<2>
+----
+<1> zbudowanie projektu
+
+<2> uruchomienie
+
+[.topic]
+== Cykl budowania aplikacji
+
+[.incremental]
+* Jasno określnone (i powtarzalne) reguły
+* Wystarczy znajomość zaledwie kilku komend do efektywnego budowania aplikacji
+* Wbudowane cykle budowania:
+** *default* - deployment aplikacji
+** *clean* - czyszczenie projektu
+** *site* - tworzenie dokumentacji
+
+[.topic]
+== Domyślny cykl życia projektu Maven'owego
+
+image::maven-build-default-lifecycle.png[Domyślny cykl życia, 500, role="middle"]
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]

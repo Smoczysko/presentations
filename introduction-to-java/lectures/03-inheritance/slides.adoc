@@ -1,0 +1,646 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Programowanie w Java Dziedziczenie
+Łukasz Rybka ; Gdańsk 2016/17
+
+[.topic]
+== SOLID
+
+[.incremental]
+* SRP - Single responsibility principle
+* *OCP - Open/closed principle*
+* *LSP - Liskov substitution principle*
+* ISP - Interface segregation principle
+* DIP - Dependency inversion principle
+
+[.topic]
+== Open/closed principle
+
+====
+[quote, Wikipedia]
+____
+Software entities … should be open for extension, but closed for modification.
+____
+====
+
+[.topic]
+== Czy klasy nie są wystarczające?
+
+[.incremental]
+* są skuteczną metodą dekompozycji (np. krzesło vs oparcie + siedzisko + nogi)
+* bardzo elastyczne
+* łatwa do opisania semantyka za pomocą asercji
+* rozdzielność interfejsu od implementacji
+
+[.topic]
+== Podstawowa konwencja i terminologia
+
+[.incremental]
+*Potomkiem klasy C*:: jest dowolna klasa, która dziedziczy bezpośrednio lub pośrednio po C, łącznie z samą klasą C).
+*Właściwy potomek C*:: to potomek tej klasy inny niż C.
+*Przodkiem C*:: jest taka klasa A, że C jest potomkiem C. *Właściwy przodek C* to taka klasa A, że C jest właściwym potomkiem A.
+
+[.topic]
+== Podstawowa zasada dziedziczenia w Javie
+
+====
+[quote, Bruce Eckel]
+____
+Dziedziczenie jest używane zawsze, kiedy tworzymy jakąś klasę (...) automatycznie dziedziczymy ze standardowej (...) klasy bazowej (...) Object.
+____
+====
+
+[.topic.source]
+== Klasa bazowa
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+public class Animal {
+    public void sleep() {
+        System.out.println("An animal sleeps...");
+    }
+
+    public void eat() {
+        System.out.println("An animal eats...");
+    }
+}
+----
+
+[.topic.source]
+== Klasy pochodne
+
+[source,java]
+----
+public class Bird extends Animal {<1>
+	@Override<2>
+	public void sleep() {
+		System.out.println("A bird sleeps...");
+	}
+
+	@Override<2>
+	public void eat() {
+		System.out.println("A bird eats...");
+	}
+}
+----
+<1> Klasa Bird *rozszerza* klasę Animal
+<2> metody sleep() oraz eat() są *nadpisywane* w klasie Bird
+
+[.topic.source]
+== Klasy pochodne
+[source,java]
+----
+public class Dog extends Animal {
+	@Override
+	public void sleep() {
+		System.out.println("A dog sleeps...");
+	}
+
+	@Override
+	public void eat() {
+		System.out.println("A dog eats...");
+	}
+}
+----
+
+[.topic.source]
+== Wykorzystanie dziedziczenia
+[source,java]
+----
+public class AnimalsInheritance {
+
+	public static void main(String[] agrs) {
+
+        Animal animal = new Animal();
+        animal.sleep();
+        animal.eat();
+
+        Bird bird = new Bird();
+        bird.sleep();
+        bird.eat();
+
+        Dog dog = new Dog();
+        dog.sleep();
+        dog.eat();
+    }
+}
+----
+
+[.topic.source]
+== Konstruktory w kontekście dziedziczenia
+[source,java]
+----
+class Art {
+    Art() {
+        System.out.println("Art class constructor");
+    }
+}
+----
+
+[.topic.source]
+== Konstruktory w kontekście dziedziczenia
+[source,java]
+----
+class Art {
+    Art() {
+        System.out.println("Art class constructor");
+    }
+}
+
+class Drawing extends Art {
+    Drawing() {
+        System.out.println("Drawing class constructor");
+    }
+}
+----
+
+[.topic.source]
+== Konstruktory w kontekście dziedziczenia
+
+[source,java]
+----
+class Art {
+    Art() {
+        System.out.println("Art class constructor");
+    }
+}
+
+class Drawing extends Art {
+    Drawing() {
+        System.out.println("Drawing class constructor");
+    }
+}
+
+public class Cartoon extends Drawing {
+    public Cartoon() {
+        System.out.println("Cartoon class constructor");
+    }
+
+    public static void main(String[] args) {
+        Art art = new Art();
+        Drawing drawing = new Drawing();
+        Cartoon cartoon = new Cartoon();
+    }
+}
+----
+
+[.topic]
+== Słowo kluczowe super
+
+[.incremental]
+* W zależności od kontekstu ma inne zastosowanie
+* Wywołane w konstruktorze - wywołuje konstruktor klasy bazowej
+* Wywołane w metodzie - wywołuje metodę klasy bazowej z zadaną nazwą
+* Daje dostęp tylko do *bezpośredniego właściwego przodka*
+
+[.topic.source]
+== Użycie super() w konstruktorze
+
+[source,java]
+----
+class Art {
+    Art() {
+        System.out.println("Art class constructor");
+    }
+
+    Art(String painter) {
+        System.out.println("Art painter: " + painter);
+    }
+}
+
+public class Drawing extends Art {
+    public Drawing() {
+        System.out.println("Cartoon class constructor");
+    }
+
+    public Drawing(String painter) {
+        super(painter);
+        System.out.println("Cartoon painter: " + painter);
+    }
+
+    public static void main(String[] args) {
+        Art art = new Art();
+        Drawing drawing = new Drawing("Vincent van Gogh");
+    }
+}
+----
+
+[.topic.source]
+== Użycie super() w konstruktorze - pułapka
+
+[source,java]
+----
+class Art {
+    Art(String painter) {
+        System.out.println("Art painter: " + painter);
+    }
+}
+
+public class Drawing extends Art {
+    public Drawing(String painter) {
+        super();
+        System.out.println("Cartoon painter: " + painter);
+    }
+
+    public static void main(String[] args) {
+        Drawing drawing = new Drawing("Vincent van Gogh");
+    }
+}
+----
+
+[.topic.source]
+== Użycie super w metodzie
+
+[source,java]
+----
+class Animal {
+    public void sleep() {
+        System.out.println("An animal sleeps...");
+    }
+}
+
+public class Bird extends Animal {
+    @Override
+    public void sleep() {
+        System.out.println("A bird sleeps...");
+        super.sleep();
+    }
+
+    public static void main(String[] args) {
+        Bird bird = new Bird();
+        bird.sleep();
+    }
+}
+----
+
+[.topic]
+== Modyfikatory dostępu
+
+[.incremental]
+public:: pozwala na dostęp wszystkich klasom z dowolnego pakietu
+package (domyślny):: dostęp do danej klasy/metody/pola mają jedynie klasy z tego samego pakietu
+
+[.topic]
+== Modyfikatory dostępu
+
+[.incremental]
+private:: nikt poza samą klasą nie ma dostępu do danej klasy/pola
+protected:: dostęp do metody/pola jedynie poprzez dziedziczenie
+
+[.topic]
+== Modyfikator dostępu "protected"
+
+[.incremental]
+* Jeżeli dziedziczymy po klasie z tego samego pakietu - mamy dostęp do jej publicznych i pakietowych składowych
+* Jeżeli dziedziczymy po klasie z innego pakietu - mamy dostęp jedynie do publicznych składowych
+* Modyfikator protected umożliwia dostęp przez dziedziczenie poza pakietem
+
+[.topic]
+== Rzutowanie
+
+[.incremental]
+* Istnieją dwa typu rzutowania: *upcasting* (w górę) oraz *downcasting* (w dół)
+* Upcasting: zawsze bezpieczne, od szczegółu (potomka) do ogółu (przodka)
+* Rzutować w górę możemy aż do pierwszego przodka (klasy Object)
+* Rzutowaniem w górę nie uzyskamy dostępu do metod przodka!
+
+[.topic.source]
+== Upcasting a wywołanie metod
+
+[source,java]
+----
+class Art {
+    public void pain() {
+        System.out.println("Art...");
+    }
+}
+
+class Drawing extends Art {
+    @Override
+    public void pain() {
+        System.out.println("Drawing...");
+    }
+
+    public static void main(String[] args) {
+        Drawing drawing = new Drawing();
+
+        drawing.pain();<1>
+        ((Art) drawing).pain();<2>
+    }
+}
+----
+
+<1> Wypisze na ekranie "Drawing..."
+<2> Wypisze na ekranie *???*
+
+[.topic.source]
+== Upcasting a wywołanie metod
+
+[source,java]
+----
+class Art {
+    public void pain() {
+        System.out.println("Art...");
+    }
+}
+
+class Drawing extends Art {
+    @Override
+    public void pain() {
+        System.out.println("Drawing...");
+    }
+
+    public static void main(String[] args) {
+        Drawing drawing = new Drawing();
+
+        drawing.pain();<1>
+        ((Art) drawing).pain();<2>
+    }
+}
+----
+
+<1> Wypisze na ekranie "Drawing..."
+<2> Wypisze na ekranie "Drawing..."
+
+[.topic]
+== Sprawdzanie typu obiektu
+
+[.incremental]
+* Każda klasa dziedziczy po klasie Object, która posiada metodę getClass()
+* Każda klasa C dziedzicząca po klasie A jest także typu A
+* Operator *instanceof* mówi nam, czy obiekt jest danego typu (z uwzględnieniem dziedziczenia)
+
+[.topic.source]
+== Sprawdzanie typu obiektu
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+class Animal {
+    // ...
+}
+
+class Bird extends Animal {
+    // ...
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal animal = new Animal();
+        Bird bird = new Bird();
+
+        System.out.println(animal.getClass().getName());
+        System.out.println(animal instanceof Animal);
+        System.out.println(animal instanceof Animal);
+
+        System.out.println(bird.getClass().getName());
+        System.out.println(bird instanceof Animal);
+        System.out.println(bird instanceof Animal);
+    }
+}
+----
+
+[.topic]
+== Klasy abstrakcyjne
+
+[.incremental]
+* Nie można tworzyć obiektów klasy abstrakcyjnej
+* Metoda abstrakcyjna nie może posiadać implementacji
+* Klasa z przynajmniej jedną metodą abstrakcyjną musi być abstrakcyjna
+
+[.topic.source]
+== Klasy abstrakcyjne
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+abstract class Animal {
+    public void sleep();
+}
+
+class Bird extends Animal {
+    @Override
+    public void sleep() {
+        System.out.println("An animal sleeps...");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Bird bird = new Bird();
+        bird.sleep();
+    }
+}
+----
+
+[.topic]
+== Polimorfizm
+
+====
+[quote, Bertrand Meyer]
+____
+Polimorfizm oznacza zdolność przyjmowania różnych postaci.
+____
+====
+
+[.topic]
+== Przypisania polimorficzne
+
+====
+[quote, Bertrand Meyer]
+____
+(...) przypisania, w których typ źródła jest inny niż typ celu są nazywane *przypisaniami polimorficznymi*.
+____
+====
+
+[.topic]
+== Polimorficzne struktury danych
+
+====
+[quote, Bertrand Meyer]
+____
+(...) struktury danych, zawierające obiekty różnych typów są nazywane *polimorficznymi strukturami danych*.
+____
+====
+
+[.topic.source]
+== Przykład wiązania polimorficznego
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+class Animal {
+    public void sleep() {
+        System.out.println("Private sleep method");
+    }
+}
+
+class Bird extends Animal {
+    @Override
+    public void sleep() {
+        System.out.println("An bird sleeps...");
+    }
+
+    public static void main(String[] args) {
+        Animal animal = new Bird();
+        animal.sleep();
+    }
+}
+----
+
+[.topic.source]
+== Wiązanie polimorficzne w argumencie metody
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+abstract class Animal {
+    public abstract void sleep();
+
+    public static void sleep(Animal animal) {
+        animal.sleep();
+    }
+}
+
+class Bird extends Animal {
+    @Override
+    public void sleep() {
+        System.out.println("An bird sleeps...");
+    }
+
+    public static void main(String[] args) {
+        Animal animal = new Bird();
+        Animal.sleep(animal);
+    }
+}
+----
+
+[.topic]
+== Wiązanie
+
+====
+[quote, Bruce Eckel]
+____
+Połączenie wywołania metody z jej ciałem nazywamy *wiązaniem* (ang. *binding*).
+____
+====
+
+[.topic]
+== Rodzaje wiązań w Javie
+
+[.incremental]
+Wczesne wiązanie (early binding):: Dokojuje się przed wykonaniem programu (wykonywane przez kompilator oraz linker)
+Późne wiązanie (late binding):: Odbywa się w czasie wykonania programu i opiera się na właściwym typie obiektu
+
+[.topic]
+== Wiązanie w Javie
+
+====
+[quote, Bruce Eckel]
+____
+Wszelkie wiązania w Javie są wiązaniami późnymi, chyba że metoda została zadeklarowana z użyciem modyfikatora final.
+____
+====
+
+[.topic.source]
+== Przesłanianie metod prywatnych
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+class Animal {
+    private void sleep() {
+        System.out.println("Private sleep method");
+    }
+
+    public static void main(String[] args) {
+        Animal animal = new Bird();
+        animal.sleep();
+    }
+}
+
+class Bird extends Animal {
+    public void sleep() {
+        System.out.println("An bird sleeps...");
+    }
+}
+----
+
+[.topic.source]
+== Metody statyczne a polimorfizm
+
+[source,java]
+----
+class Super {
+    public static String staticGet() {
+        return "Bazowa wersja staticGet()";
+    }
+    public String dynamicGet() {
+        return "Bazowa wersja dynamicGet()";
+    }
+}
+class Sub extends Super {
+    public static String staticGet() {
+        return "Pochodna wersja staticGet()";
+    }
+    public String dynamicGet() {
+        return "Pochodna wersja dynamicGet()";
+    }
+
+    public static void main(String[] args) {
+        Super sup = new Sub();
+        System.out.println(sup.staticGet());
+        System.out.println(sup.dynamicGet());
+    }
+}
+----
+
+[.topic]
+== Effective Java
+
+image::effective-java.jpg[Effective Java, 350, role="middle"]
+
+[.topic]
+== Item10: Always override toString
+
+====
+[quote, Joshua Bloch]
+____
+(...) providing a good toString implementation makes your class much more pleasant to use.
+____
+====
+
+[.topic]
+== Item10: Always override toString
+
+====
+[quote, Joshua Bloch]
+____
+When practical, the toString method should return *all* of the interesting information contained in the object (...).
+____
+====
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
