@@ -1,0 +1,381 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Obiektowe Języki Programowania Generyczność
+Łukasz Rybka ; Gdańsk 2016/17
+
+[.topic]
+== Ideaologia
+
+====
+[quote, "Learning the Java Language"]
+____
+Generics add stability to your code by making more of your bugs detectable at compile time.
+____
+====
+
+[.topic]
+== Słowem wstępu...
+
+[.incremental]
+* Wprowadzone dopiero w *JDK 5.0 (2004!)*
+* Pozwalają na wprowadzenie warstwy abstrakcji ponad typami
+* Najczęściej spotykane przy użyciu kontenerów (ale nie tylko!)
+
+[.topic.source]
+== Tworzenie listy Integer'ów przed JSE 5.0
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        List myIntList = new LinkedList();
+        myIntList.add(new Integer(0));
+
+        // ...
+
+        Integer x = (Integer) myIntList.iterator().next();<1>
+    }
+}
+----
+<1> Może skutkować wyjątkiem czasu wykonania ClassCastException (unchecked)!
+
+[.topic.source]
+== Tworzenie listy Integer'ów od JSE 5.0
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        List<Integer> myIntList = new LinkedList<Integer>();
+        myIntList.add(new Integer(0));
+
+        // ...
+
+        Integer x = myIntList.iterator().next();<1>
+    }
+}
+----
+<1> - weryfikowane w czasie kompilacji
+
+[.topic.source]
+== Generyczne interfejsy
+
+[source,java]
+----
+package java.util;
+
+public interface List <E> {
+    void add(E x);
+    Iterator<E> iterator();
+}
+
+public interface Iterator<E> {
+    E next();
+    boolean hasNext();
+}
+----
+
+[.topic]
+== Interpretacja generycznego interfejsu List<E>
+
+[.incremental]
+* W czasie kompilacji generuje on jedną klasę, w jednym pliku (a nie ListInteger, ListString etc.)
+* E jest tzw. *formalnym parametrem typu*
+* W *czasie wywołania* formalny parametr typu zostaje zastąpiony przez *właściwy argument* i dopiero wtedy ciało metody jest ewaluowane
+
+[.topic]
+== Koncepcja nazewnicza
+
+[.incremental]
+* Im bardziej zwięzła nazwa typu - tym lepiej (możliwie jedna litera)
+* Unikamy małych liter (odróżnienie od właściwych klas czy interfejsów)
+* Kontenery stosują *E* od "Element"
+
+[.topic.source]
+== Dziedziczenie i rzutowanie w kontekście generyczności
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        List<String> strings = new ArrayList<String>();
+        List<Object> objects = strings;<1>
+
+        objects.add(new Object());
+
+        String s = strings.get(0);
+    }
+}
+----
+<1> - *????*
+
+[.topic.source]
+== Dziedziczenie i rzutowanie w kontekście generyczności
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        List<String> strings = new ArrayList<String>();
+        List<Object> objects = strings;<1>
+
+        objects.add(new Object());
+
+        String s = strings.get(0);
+    }
+}
+----
+<1> - zostanie zablokowane przez kompilator!
+
+[.topic]
+== Ideaologia
+
+====
+[quote, "Learning the Java Language"]
+____
+In general, if Foo is a subtype (subclass or subinterface) of Bar, and G is some generic type declaration, it is not the case that G<Foo> is a subtype of G<Bar>.
+____
+====
+
+[.topic.source]
+== Wypisanie wszystkich elementów kolekcji (#1)
+
+[source,java]
+----
+public class Main {
+    void printCollection(Collection c) {
+        Iterator i = c.iterator();
+
+        for (k = 0; k < c.size(); k++) {
+            System.out.println(i.next());
+        }
+    }
+}
+----
+
+[.topic.source]
+== Wypisanie wszystkich elementów kolekcji (#2)
+
+[source,java]
+----
+void printCollection(Collection<Object> c) {
+    for (Object e : c) {
+        System.out.println(e);
+    }
+}
+----
+
+[.topic]
+== Wypisanie wszystkich elementów kolekcji
+
+[.incremental]
+* Wersja pierwsza działa z dowolnym typem kolekcji
+* Wersja druga działa tylko z kolekcjami typu Collection<Object> (*!*)
+* Co w takim razie jest "supertypem" wszystkich kolekcji?
+* Collection<?> - "kolekcja nieznanego typu" (*wildcard*)
+
+[.topic.source]
+== Wypisanie wszystkich elementów kolekcji (#3)
+
+[source,java]
+----
+void printCollection(Collection<?> c) {
+    for (Object e : c) {<1>
+        System.out.println(e);
+    }
+}
+----
+<1> - bezpieczne ponieważ wszystkie klasy dziedziczą po klasie Object
+
+[.topic.source]
+== Wypisanie wszystkich elementów kolekcji (#3)
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        Collection<?> c = new ArrayList<String>();
+
+        c.add(new Object());<1>
+    }
+}
+----
+<1> - *błąd kompilacji!* - dlaczego?
+
+[.topic.source]
+== Przykładowa hierarchia dziedziczenia
+
+[source,java]
+----
+public abstract class Shape {
+    public abstract void draw(Canvas c);
+}
+
+public class Circle extends Shape {
+    private int x, y, radius;
+    public void draw(Canvas c) {
+        ...
+    }
+}
+
+public class Rectangle extends Shape {
+    private int x, y, width, height;
+    public void draw(Canvas c) {
+        ...
+    }
+}
+----
+
+[.topic.source]
+== Klasa Canvas
+
+[source,java]
+----
+
+public class Canvas {
+    public void draw(Shape s) {
+        s.draw(this);
+    }
+
+    public void drawAll(List<Shape> shapes) {<1>
+        for (Shape s: shapes) {
+            s.draw(this);
+       }
+    }
+}
+----
+<1> - może zostać wywołana jedynie z listą typu Shape
+
+[.topic.source]
+== Klasa Canvas
+
+[source,java]
+----
+
+public class Canvas {
+    public void draw(Shape s) {
+        s.draw(this);
+    }
+
+    public void drawAll(List<? extends Shape> shapes) {
+        for (Shape s: shapes) {<1>
+            s.draw(this);
+       }
+    }
+}
+----
+<1> - bezpieczne ponieważ wiemy, że przekazany typ będzie potomkiem Shape
+
+[.topic]
+== Bounded wildcard
+
+[.incremental]
+* Wyrażenie "<? extends X>" oznacza, że nie znamy dokładnego typu, lecz wiemy, że typ ten jest potomkiem X
+* Typ X jest nazywany *upper bound of the wildcard*
+
+[.topic.source]
+== Bounded wildcard - pułapka
+
+[source,java]
+----
+
+public class Main {
+    public void addRectangle(List<? extends Shape> shapes) {
+        shapes.add(0, new Rectangle());<1>
+    }
+}
+----
+<1> - *błąd kompilacji* - ponieważ nie znamy ostatecznego typu ?
+
+[.topic.source]
+== Metoda generyczna - podejście pierwsze
+
+[source,java]
+----
+
+public class Main {
+    static void fromArrayToCollection(Object[] a, Collection<?> c) {
+        for (Object o : a) {
+            c.add(o);<1>
+        }
+    }
+}
+----
+<1> - *błąd kompilacji*
+
+[.topic.source]
+== Metoda generyczna - podejście drugie
+
+[source,java]
+----
+
+public class Main {
+    static <T> void fromArrayToCollection(T[] a, Collection<T> c) {
+        for (T o : a) {
+            c.add(o);
+        }
+    }
+}
+----
+
+[.topic.source]
+== Metoda generyczna - przykład użycia
+
+[source,java]
+----
+Object[] oa = new Object[100];
+Collection<Object> co = new ArrayList<Object>();
+
+String[] sa = new String[100];
+Collection<String> cs = new ArrayList<String>();
+
+Integer[] ia = new Integer[100];
+Float[] fa = new Float[100];
+Number[] na = new Number[100];
+Collection<Number> cn = new ArrayList<Number>();
+
+fromArrayToCollection(oa, co);<1>
+fromArrayToCollection(sa, cs);<2>
+fromArrayToCollection(sa, co);<3>
+fromArrayToCollection(ia, cn);<4>
+fromArrayToCollection(fa, cn);<5>
+fromArrayToCollection(na, cn);<6>
+fromArrayToCollection(na, co);<7>
+fromArrayToCollection(na, cs);<8>
+----
+
+[.topic.source]
+== Generyczna klasa Collections
+
+[source,java]
+----
+class Collections {
+    public static <T> void copy(List<T> dest, List<? extends T> src) {<1>
+        // ...
+    }
+
+    public static <T, S extends T> void copy(List<T> dest, List<S> src) {<2>
+        // ...
+    }
+}
+----
+<1> - wersja z użyciem wildcard
+<2> - wersja bez użycia wildcard
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
