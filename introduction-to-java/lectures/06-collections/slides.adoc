@@ -1,0 +1,604 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Programowanie w Java Kolekcje
+Łukasz Rybka ; Gdańsk 2016/17
+
+[.topic]
+== Co to są tablice?
+
+====
+[quote, Bruce Eckel]
+____
+(...) są tworem, który się konstruuje i wypenia elementami (...)
+____
+====
+
+[.topic]
+== Tablice - podstawowe informacje
+
+[.incremental]
+* Tablice odróżniają dwie kwestie: wydajność i typ
+* Tablica jest prostą sekwencją liniową, która pozwala na szybki dostęp do elementów
+* Kiedy tworzymy tablicę, jej rozmiar jest ustalony i nie może zostać zmieniony
+
+[.topic]
+== Tablice - podstawowe informacje
+
+[.incremental]
+* Poszczególne elementy wybieramy za pomocą indeksu typu *int*
+* Tablica przetrzymuje referencje do obiektów, nie same obiekty (*!*)
+* Dostęp do elementów tablicy jest kontrolowany w runtime - RuntimeExpeption
+
+[.topic]
+== Co to są tablice?
+
+====
+[quote, Bruce Eckel]
+____
+Tablica jest (...) najbardziej wydajnym sposobem zapisu i (...) dostępu do sekwencji obiektów (...)
+____
+====
+
+[.topic]
+== Polimorficzne struktury danych
+
+====
+[quote, Bertrand Meyer]
+____
+(...) struktury danych, zawierające obiekty różnych typów są nazywane *polimorficznymi strukturami danych*.
+____
+====
+
+[.topic]
+== Tablice - podstawowe informacje
+
+[.incremental]
+* W tablicach przetrzymujemy obiekty danego *typu*
+* Tablica jest pełnoprawnym obiektem - identyfikator tablicy jest rzeczywistym odwołaniem do prawdziwego obiektu, którhy został stworzony na stercie
+
+[.topic.source]
+== Przykład tworzenia tablicy
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        String[] arr = new String[5];
+
+        arr[0] = "Element 0";
+        arr[1] = "Element 1";
+        arr[2] = "Element 2";
+        arr[3] = "Element 3";
+        arr[4] = "Element 4";
+
+        System.out.println(arr); // ???
+    }
+}
+----
+
+[.topic.source]
+== Wyświetlanie składników tablicy
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        String[] arr = new String[5];
+
+        arr[0] = "Element 0";
+        arr[1] = "Element 1";
+        arr[2] = "Element 2";
+        arr[3] = "Element 3";
+        arr[4] = "Element 4";
+
+        System.out.println(Arrays.deepToString(arr));
+    }
+}
+----
+
+[.topic.source]
+== Uzupełnianie tablicy elementami
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        String[] arr = new String[10];
+        Random rand = new Random();
+
+        for (int i = 0; i < 5; i++) {
+            arr[rand.nextInt(10)] = String.valueOf(rand.nextInt());
+        }
+
+        System.out.println(Arrays.deepToString(arr));
+        System.out.println("Ilość elementów: " + arr.length); // ???
+    }
+}
+----
+
+[.topic]
+== Pole .length tablicy
+
+[.incremental]
+* Zawiera informację o ilości elementów w tablicy
+* Przy tworzeniu tablicy wszystkie jej elementy są uzupełniane null'ami
+* Nie ma prostej (i szybkiej) metody sprawdzenia ilości *wypełnionych* elementów tablicy
+
+[.topic.source]
+== Statyczna inicjalizacja tablicy
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        String[] arr = {
+            "Element 0",
+            "Element 1",
+            "Element 2",
+            "Element 3",
+            "Element 4"
+        }
+
+        System.out.println(Arrays.deepToString(arr));
+    }
+}
+----
+
+[.topic]
+== Tablice typów prostych
+
+[.incremental]
+* Tablica nie musi składać się tylko ze złożonych typów
+* Istnieje możliwość tworzenia tablicy obiektów prostych
+* Kiedy typem tablicy jest obiekt, a dodajemy do niego odpowiadający obiekt typu prostego - następuje zjawisko *autoboxingu*
+
+[.topic.source]
+== Statyczna inicjalizacja tablicy
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        int[] ints = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        double[] doubles = {1.1, 2.2, 3.3, 4.4, 5.5};
+
+        Integer autoboxed = new Integer[10];
+        for (int i = 0; i < 10; i++) {
+            autoboxed[i] = i * i;
+        }
+
+        System.out.println(Arrays.deepToString(ints));
+        System.out.println(Arrays.deepToString(doubles));
+        System.out.println(Arrays.deepToString(autoboxed));
+    }
+}
+----
+
+[.topic]
+== Tablice wielowymiarowe
+
+[.incremental]
+* Istnieje możliwość tworzenia tablic o więcej niż jednym wymiarze
+* Tworzenie tablic wielowymiarowych może być statyczne lub dynamiczne (słówko kluczowe *new*)
+* Każda para zagnieżdżonych nawiasów klamrowych to osobny wymiar tablicy
+
+[.topic.source]
+== Przykład prostej tablicy dwuwymiarowej
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        int[][] ints = {
+            {1, 2, 3, 4, 5},
+            {6, 7, 8, 9, 10}
+        };
+
+        System.out.println(Arrays.deepToString(ints));
+
+        for (int i = 0; i < ints.length; i++) {
+            for (int j = 0; j < ints[0].length; j++) {
+                System.out.println("Element: " + ints[i][j]);
+            }
+        }
+    }
+}
+----
+
+[.topic]
+== Ragged arrays
+
+[.incremental]
+* Każdy wymiar tablicy może być inicjalizowany dynamicznie z dowolnym rozmiarem
+* Tablica o różnej ilości elementów w tzw. wektorze (wierszu) nazywana jest *regged* (poszarpana)
+
+[.topic.source]
+== Przykład tablicy poszarpanej
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        Random rand = new Random(47);
+        int[][][] arr = new int[rand.nextInt(7)][][];
+
+        for(int i = 0; i < arr.length; i++) {
+            arr[i] = new int[rand.nextInt(5)][];
+
+            for (int j = 0; j < arr[i].length; j++) {
+                arr[i][j] = new int[rand.nextInt(5)];
+            }
+        }
+
+        System.out.println(Arrays.deepToString(arr));
+    }
+}
+----
+
+[.topic]
+== Po co nam kontenery danych?
+
+====
+[quote, Bertrand Meyer]
+____
+Program obejmujący wyłącznie ustaloną liczbę obiektów, których czas życia jest znany, jest to program dosyć prosty.
+____
+====
+
+[.topic]
+== Zbiory klas kontenerowych
+
+[.incremental]
+* Wprowadzone (dopracowane) w Java SE 5 do java.util.*
+* Najważniejsze zbiory:
+** List
+** Set
+** Queue
+** Map
+
+[.topic]
+== Kolekcja Collection
+
+[.incremental]
+* Grupa odrębnych elementów, podlegających jakimś regułom
+* W jej skład wchodzą typu List, Set czy też Queue
+* Wszystkie implementacje (jak ArrayList) podlegają jednemu interfejsowi
+
+[.topic]
+== Kolekcja Map
+
+[.incremental]
+* Grupa par obiektów typu klucz-wartość
+* Pozwala na wydobywanie wartości dla znanego klucza
+* Kluczem jest obiekt (analogicznie jak w liście indeks numeryczny)
+* Inaczej nazywany *tablicą asocjacyjną* lub *słownikiem*
+
+[.topic]
+== Taksonomia kontenerów
+
+image::container-taxonomy.png[Taksonomia kontenerów, 650, role="middle"]
+
+[.topic]
+== Interfejs List
+
+[.incremental]
+* Obiecuje zachowanie kolejności elementów
+* Uzupełnia interfejs Collections o zestaw metod pozwalający na wstawianie i usuwanie elementów do i ze środka kolekcji
+* Posiada dwa podtypy: *ArrayList* oraz *LinkedList*
+
+[.topic]
+== Interfejs ArrayList
+
+[.incremental]
+* Podstawowy typ kolekcji w Javie
+* Daje swobodny (i "tani") dostęp do elementów w dowolnym miejscu kolekcji
+* Niższa wydajność przy wstawianiu i usuwaniu elementów z listy
+
+[.topic.source]
+== Dawne podejście do kolekcji ArrayList
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        List strings = new ArrayList();
+
+        strings.add("A");
+        strings.add("B");
+        strings.add("C");
+
+        strings.add(0, "F");
+
+        System.out.println("Size: " + strings.size());
+        System.out.println(strings);
+
+        strings.add(0, new Date()); // ???
+        System.out.println((String) strings.get(0)); // ???
+    }
+}
+----
+
+[.topic.source]
+== Listy typizowane
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        List<String> strings = new ArrayList<String>();
+
+        strings.add("A");
+        strings.add("B");
+        strings.add("C");
+
+        strings.add(0, "F");
+
+        System.out.println("Size: " + strings.size());
+        System.out.println(strings);
+
+        strings.add(0, new Date()); // Compilation Error!!
+        System.out.println((String) strings.get(0)); // Zbędne!
+    }
+}
+----
+
+[.topic]
+== Iteratory
+
+[.incremental]
+* Wprowadzają dodatkowy poziom abstrakcji dla podstawowych operacji na kolekcjach
+* Jednakowe API dla dowolnej kolekcji (czy to Collection czy też Map!)
+* Bardzo tanie w stworzeniu
+* Ograniczony zestaw operacji
+* Iteracja wyłącznie w jednym kierunku - od początku do końca
+
+[.topic]
+== Możliwości iteratorów
+
+[.incremental]
+* Wywołując metodę *iterator()* obiektu Collection otrzymujemy iterator z gotowym pierwszym elementem
+* Uzyskanie dostępu do kolejnego obiektu dzięki metodzie *next()*
+
+[.topic]
+== Możliwości iteratorów
+
+[.incremental]
+* Sprawdzenie, czy kolekcja posiada kolejny element - metoda *hasNext()*
+* Usunięcie ostatnio zwróconego elementu metodą *remove()*
+
+[.topic.source]
+== Przykład wykorzystania iteratora
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        List<String> strings = new ArrayList<String>() {{
+            add("A");
+            add("B");
+            add("C");
+        }};
+
+        Iterator<String> iterator = strings.iterator();
+        while(iterator.hasNext()) {
+            System.out.println("Element: " + iterator.next());
+        }
+
+        for (String str : strings) {
+            System.out.println("For each: " + str);
+        }
+    }
+}
+----
+
+[.topic]
+== Interfejs Set
+
+[.incremental]
+* Kolekcja, która nie może zawierać więcej niż jednego egzemplarza danej wartości
+* Kolekcje typu Set zostały zoptymalizowane pod kątem szybkości wyszukiwania elementu
+* Posiada dokładnie ten sam interfejs co Collection
+* Dodanie kolejnego identycznego elementu jest ignorowane
+
+[.topic.source]
+== Przykład zastosowania kolekcji Set
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        Random rand = new Random(47);
+        Set<Integer> intset = new HashSet<Integer>();
+
+        for (int i = 0; i < 10000; i++) {
+            intset.add(rand.nextInt(30));
+        }
+
+        System.out.println(intset);
+    }
+}
+----
+
+[.topic]
+== Interfejs Map
+
+[.incremental]
+* Daje możliwość odwzorowania obiektów na inne obiekty
+* Pozwala na przeszukiwanie zadanego klucza (metoda *containsKey()*) oraz wartości (metoda *containsValue()*)
+* Istnieje wiele implementacji - do różnych zastosowań i optymalizacji
+
+[.topic.source]
+== Przykład wykorzystania interfejsu Map
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        Random rand = new Random(47);
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+        for (int i = 0; i < 10000; i++) {
+            int r = rand.nextInt(20);
+            Integer freq = map.get(r);
+
+            map.put(r, freq == null ? 1 : freq + 1);
+        }
+
+        System.out.println(map);
+
+        for (int i = 0; i < 20; i++) {
+            System.out.println(i + " -> " + map.containsKey(i));
+        }
+    }
+}
+----
+
+[.topic]
+== Interfejs Map - dodatkowe informacje
+
+[.incremental]
+* Kluczami mogą być tylko obiekty, nie typy proste
+* Wszystkie klucze pobieramy za pomocą metody *keySet()* (Set)
+* Wszystkie wartości pobieramy za pomocą metody *values()* (Collection)
+
+[.topic.source]
+== Własna klasa klucza mapy
+
+[source,java]
+----
+public class CustomKey {
+    private int num;
+
+    public CustomKey(int num) {
+        this.num = num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    @Override
+    public String toString() {
+        return "CustomKey{" + "num=" + num + '}';
+    }
+}
+----
+
+[.topic.source]
+== Wykorzystanie klasy CustomKey
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        Map<CustomKey, Integer> map = new HashMap<>();
+
+        CustomKey key1 = new CustomKey(1);
+        map.put(key1, 1);
+
+        CustomKey key2 = new CustomKey(2);
+        map.put(key2, 2);
+
+        key1 = new CustomKey(1);
+        map.put(key1, -1);
+
+        System.out.println(map); // ???
+    }
+}
+----
+
+[.topic.source]
+== Metody hashCode() i equals() klasy CustomKey
+
+[source,java]
+----
+public class CustomKey {
+    // ...
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CustomKey customKey = (CustomKey) o;
+
+        return num == customKey.num;
+    }
+
+    @Override
+    public int hashCode() {
+        return num;
+    }
+}
+----
+
+[.topic]
+== Metoda equals
+
+[.incremental]
+* Musi być zwrotna: dla każdego x, x.equals(x) ma zwracać wartość true
+* Musi być symetryczna: dla dowolnego x i y, x.equals(y) ma zwracać wartość true wtedy i tylko wtedy, gdy y.equals(x) zwraca true
+
+[.topic]
+== Metoda equals
+
+[.incremental]
+* Musi być przechodnia: dla dowolnych x, y i z, jeśli x.equals(y) zwraca true oraz y.equals(z) zwraca truem to także x.equals(z) powinna zwracać true
+* Dla dowolnego x różnego od null wywołanie x.equals(null) powinno zwracać false
+
+[.topic]
+== Metoda equals
+
+* Musi być spójna: dla dowolnych x i y wieloktrone wywołania x.equals(y) spójnie zwracają wartość true lub false, zakładając że żadne informacje używane przy porównywaniu obiektów nie zostały zmienione
+
+[.topic]
+== Metoda hashCode
+
+[.incremental]
+* Przetrzymujemy jej wartość w zmiennej wstępnie uzupełnianej stała numeryczną (np. 31)
+* Dla każdego znaczącego pola wyliczamy osobny hashCode i dodajemy (według wzoru, np. result  = 31 * result + c) do wyniku
+* Pola nieznaczące to takie, których wartość możemy uzyskać z kombinacji innych pól
+
+[.topic]
+== Metoda hashCode
+
+[.incremental]
+* Pole boolean: *f ? 1: 0*
+* Pole byte, char, short lub int: (int) f
+* Pole long: (int) (f ^ (f >>> 32))
+* Pole float: Float.floatToIntBites(f)
+
+[.topic]
+== Metoda hashCode
+
+[.incremental]
+* Pole double: Double.doubleToLongBits(f) + zasada dla long
+* Pole obiektowe: dla null: 0, w przeciwnym wypadku wartość f.hashCode()
+* Pole tablicowe: każdy element traktujemy jak osobne pole obiektu
+
+[.topic]
+== Pełna taksonomia kontenerów
+
+image::full-container-taxonomy.png[Pełna taksonomia kontenerów, 450, role="middle"]
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]

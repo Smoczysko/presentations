@@ -1,0 +1,295 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Programowanie w Java Wyjątki
+Łukasz Rybka ; Gdańsk 2016/17
+
+[.topic]
+== Ideaologia
+
+====
+[quote, Bruce Eckel]
+____
+Podstawa ideologii Javy jest założenie, że "*źle sformułowany kod nie zostanie wykonany*".
+____
+====
+
+[.topic]
+== Ideaologia
+
+====
+[quote, Bruce Eckel]
+____
+Aby system był niezawodny, każdy jego komponent musi być niezawodny.
+____
+====
+
+[.topic]
+== Proces zgłaszania wyjątku
+
+[.incremental]
+* Tworzony jest obiekt wyjątku
+* Aktualna ścieżka wykonania jest przerywana i "rzucany" jest obiekt wyjątku
+* Mechanizm obsługi wyjątków wyszukuje tzw. *procedurę obsługi wyjątku* - kodu obsługującego wyjątkową sytuację
+
+[.topic.source]
+== Blok try...catch
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        try {
+            // ...
+        } catch (ExceptionType1 name) {
+            // ...
+        } catch (ExceptionType2 name) {
+            // ...
+        }
+    }
+}
+----
+
+[.topic]
+== Blok try...catch
+
+[.incremental]
+* Bloków catch może być dowolna liczba
+* Tylko pierwszy pasujący block catch jest wykonywany
+
+[.topic.source]
+== Blok try...catch
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        try {
+            someMethod();
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("IndexOutOfBoundsException");
+        } catch (SQLException e) {
+            System.err.println("Caught SQLException");
+        } catch (IOException e) {
+            System.err.println("Caught IOException");
+        }
+    }
+}
+----
+
+[.topic.source]
+== Blok try...catch w Java SE 7+
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        try {
+            someMethod();
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("IndexOutOfBoundsException");
+        } catch (IOException|SQLException e) {
+            System.err.println("Caught SQLException or IOException");
+        }
+    }
+}
+----
+
+[.topic.source]
+== Specyfikacja wyjątków
+
+[source,java]
+----
+public class Main {
+    void someMethod() throws IndexOutOfBoundsException,
+        IOException, SQLException {
+
+        // Some method code...
+    }
+}
+----
+
+[.topic]
+== Specyfikacja wyjątków
+
+[.incremental]
+* Definiowana w sygnaturze metody
+* Wymaga podania wszystkich wyjątków typu Checked nie obsłużonych w ciele metody
+* Wyjątki Unchecked (RuntimeException) nie muszą być podawane w sygnaturze metody
+* Wymusza na kliencie obsługę wyjątku lub przekazania informacji w sygnaturze metody
+
+[.topic.source]
+== Ponowne rzucenie wyjątku
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        try {
+            someMethod();
+        } catch (Exception e) {
+            System.out.println(e.printStackTrace());
+            e.printStackTrace(System.out);
+
+            throw e;
+        }
+    }
+}
+----
+
+[.topic.source]
+== Rzucenie wyjątku
+
+[source,java]
+----
+public class Main {
+    void someMethod(int index) throws IndexOutOfBoundsException {
+        // ...
+
+        throw new IndexOutOfBoundsException("Invalid index!");
+    }
+}
+----
+
+[.topic.source]
+== Sekwencja wyjątków
+
+[source,java]
+----
+public class Main {
+    void someMethod(Integer index) throws RuntimeExeption {
+
+        IndexOutOfBoundsException cause = new IndexOutOfBoundsException("Invalid index!");
+
+        cause.initCause(new NullPointerException("Argument is null!"));
+
+        throw new RuntimeException(cause);
+    }
+}
+----
+
+[.topic.source]
+== Tworzenie własnych wyjątków
+
+[source,java]
+----
+class VeryImportantException extends Exception {
+}
+
+class ExtendedMessageException extends Exception {
+    @Override
+    public String getMessage() {
+        return "ExtendedMessageException!!!!\n" + super.getMessage();
+    }
+
+    @Override
+    public String toString() {
+        return "ExtendedMessageException{}";
+    }
+}
+----
+
+[.topic.source]
+== Blok try...catch...finally
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        try {
+            // ...
+        } catch (ExceptionType1 name) {
+            // ...
+        } catch (ExceptionType2 name) {
+            // ...
+        } finally {
+            // ...
+        }
+    }
+}
+----
+
+[.topic.source]
+== Bloku finally: zagubiony wyjątek
+
+[source,java]
+----
+class InitException extends Exception {}
+
+class DisposeException extends Exception {}
+
+public class Main {
+    void init() throws InitException { }
+
+    void dispose() throws DisposeException { }
+
+    public static void main(String[] args) {
+        try {
+            init();
+        } finally {
+            dispose();
+        }
+    }
+}
+----
+
+[.topic.source]
+== Bloku finally: zagubiony wyjątek
+
+[source,java]
+----
+class InitException extends Exception {}
+
+class DisposeException extends Exception {}
+
+public class Main {
+    void init() throws InitException { }
+
+    void dispose() throws DisposeException { }
+
+    public static void main(String[] args) {
+        try {
+            init();
+        } finally {
+            try {
+                dispose();
+            } catch(DisposeException e) {
+                // ...
+            }
+        }
+    }
+}
+----
+
+[.topic.source]
+== Bloku finally: tłumienie wyjątków
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        try {
+            throw new RuntimeException();
+        } finally {
+            return;
+        }
+    }
+}
+----
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
