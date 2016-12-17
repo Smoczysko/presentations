@@ -1,0 +1,94 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Programowanie w Java Projekt
+Łukasz Rybka ; Gdańsk 2016/17
+
+[.topic]
+== Zaliczenie laboratoriów
+
+[.incremental]
+* Podstawą zaliczenia laboratoriów jest przesłanie w terminie samodzielnie wykonanego projektu w języku Java
+* Ostateczny termin przesłania projektu to *05.02.2017r. godzina 23:59*
+* *Projekty przesłane po tym terminie nie będą brane pod uwagę!*
+
+[.topic]
+== Przesłanie projektu
+
+[.incremental]
+* Projekt musi zostać przesłany w postaci projektu Maven
+* Projekt (plik pom.xml oraz katalog src) archiwizujemy do pliku *ZIP* i przesyłamy jako załącznik maila
+* Mail z projektem powinien zawierać imię i nazwisko studenta oraz krótki opis projektu
+
+[.topic]
+== Lista plików i katalogów, które *NIE POWINNY* zostać przesłane w paczce ZIP
+
+[.incremental]
+* https://github.com/github/gitignore/
+** blob/master/Maven.gitignore
+** blob/master/Global/Eclipse.gitignore
+
+[.topic]
+== Apache Maven
+
+[.incremental]
+* Projekt musi kompilować się pomyślnie za pomocą polecenia *mvn compile*
+* Projekt musi budować się pomyślnie za pomocą polecenia *mvn package*
+
+[.topic]
+== Adres przesyłania projektów
+* Adres email, na który projekt ma zostać wysłany zostanie podany na ostatnim wykładzie
+
+[.topic]
+== Tematyka projektów
+
+[.incremental]
+* Temat realizowany przez projekt jest dowolny i decyduje o nim student
+* W przypadku problemów z doborem tematu - możliwa konsultacja mailowa
+
+[.topic]
+== Minimalne wymagania technologiczne
+
+[.incremental]
+* Stworzenie zestawu klas prezentujących mechanizm dziedziczenia oraz polimorfizmu
+* Wykorzystanie własnej klasy abstrakcyjnej lub interfejsu
+* Zdefiniowanie własnego wyjątku oraz jego wykorzystanie (zarówno "rzucenie" jak i "złapanie")
+
+[.topic]
+== Minimalne wymagania technologiczne
+
+[.incremental]
+* Wykorzystanie przynajmniej dwóch różnych kolekcji (dowolnie z grupy Collections lub Map)
+* Operacje na kolekcjach lub ich iteratorach
+
+[.topic]
+== Możliwość zdobycia dodatkowych punktów
+
+[.incremental]
+* Dodanie testów jednostkowych
+* Jawne wykorzystanie generyczności (innej niż tej dostępnej z poziomu języka)
+* Dodatkowe operacje jak np. operacje na plikach
+
+[.topic]
+== Java Code Conventions
+
+[.incremental]
+* Kod całego projektu musi podlegać regułom zawartym w *Java Code Conventions*
+* Link do tych zasad można znaleźć na stronie przedmiotu (sekcja "Literature")
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
