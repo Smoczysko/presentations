@@ -1,0 +1,449 @@
+:longform:
+:sectids!:
+:imagesdir: images
+:source-highlighter: highlightjs
+:language: no-highlight
+:dzslides-style: asciidoctor-custom
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,200&family=Cedarville+Cursive
+:dzslides-transition: fade
+:dzslides-highlight: monokai
+:experimental:
+:toc2:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:icons: font
+:linkattrs:
+
+= Programowanie w Java Rozszerzenie
+Łukasz Rybka ; Gdańsk 2016/17
+
+[.topic]
+== Klasy wewnętrzne
+
+[.incremental]
+* Klasa wewnętrzna to taka, która została zdefiniowana w ciele innej klasy
+* Klasy wewnętrzne posiadają "specjalny łącznik" dający im dostęp do pól klasy zewnętrznej
+* Odwołania do klasy zewnętrznej za pomocą *.this* oraz *.new*
+* Aby utworzyć obiekt klasy wewnętrznej, konieczny jest obiekt klasy zewnętrznej!
+
+[.topic.source]
+== Klasy wewnętrzne - przykład
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+public class DoThis {
+    void f() {
+        System.out.println("DoThis.f()");
+    }
+
+    public class Inner {<1>
+        public DoThis outer() {
+            return DoThis.this;<2>
+        }
+    }
+
+    public Inner inner() {
+        return new Inner();<3>
+    }
+}
+----
+<1> Definicja klasy wewnętrznej
+<2> Zwrócenie referencji do obiektu klasy zewnętrznej z obiektu klasy wewnętrznej
+<3> Stworzenie obiektu klasy wewnętrznej
+
+[.topic.source]
+== Klasy wewnętrzne - przykład wykorzystania
+
+[source,java]
+----
+package pl.org.dragonia.oopl;
+
+public class Main {
+    public static void main(String[] args) {
+        DoThis dt = new DoThis();<1>
+        DoThis.Inner dtinner = dt.inner();<2>
+        dtinner.outer.f();<3>
+
+        DoThis.Inner inner = dt.new Inner();<4>
+    }
+}
+----
+<1> Stworzenie obiektu klasy zewnętrznej
+<2> Stworzenie obiektu klasy wewnętrznej
+<3> Wywołanie metody obiektu klasy zewnętrznej z referencji w klasie wewnętrznej
+<4> Stworzenie obiektu klasy wewnętrznej z użyciem operatora *.new*
+
+[.topic]
+== Nowości dotyczące interfejsów w Java 8
+
+[.incremental]
+* Domyślne (*default*) implementacje metod
+* Metody statyczne
+* Nowe problemy...
+
+[.topic.source]
+== Metody domyślne
+
+[source,java]
+----
+public interface Interface1 {
+    void method1(String str);
+
+    default void log(String str) {
+        System.out.println("I1 logging::"+str);
+        print(str);
+    }
+}
+
+public class Impl1 implements Interface1 {
+    @Override
+    void method1(String str) {
+        // ...
+    }
+
+    public static void main(String[] args) {
+        Impl1 impl = new Impl1();
+
+        impl.method1();
+        impl.log("Something...");
+    }
+}
+----
+
+[.topic.source]
+== Metody domyślne
+
+[source,java]
+----
+public interface Interface2 {
+    void method2();
+
+    default void log(String str) {
+        System.out.println("I2 logging::"+str);
+    }
+
+}
+
+public class Impl1 implements Interface1, Interface2 {
+    @Override void method1(String str) { /** ... */ }
+    @Override void method2(String str) { /** ... */ }
+
+    public static void main(String[] args) {
+        Impl1 impl = new Impl1();
+        impl.log("Something..."); // ????
+    }
+}
+----
+
+[.topic.source]
+== Metody domyślne
+
+[source,java]
+----
+public class Impl1 implements Interface1, Interface2 {
+    @Override void method1(String str) { /** ... */ }
+    @Override void method2(String str) { /** ... */ }
+
+    @Override
+    public void log(String str){
+        System.out.println("Impl1 logging::"+str);
+        Interface1.print("abc");
+    }
+
+    public static void main(String[] args) {
+        Impl1 impl = new Impl1();
+        impl.log("Something...");
+    }
+}
+----
+
+[.topic.source]
+== Statyczne metody w interfejsie
+
+[source,java]
+----
+public interface StringUtils {
+    default void print(String str) {
+        if (!isNull(str)) {
+            System.out.println("MyData Print::" + str);
+        }
+    }
+
+    static boolean isNull(String str) {
+        System.out.println("Interface Null Check");
+
+        return str == null ? true : "".equals(str) ? true : false;
+    }
+}
+----
+
+[.topic.source]
+== Statyczne metody w interfejsie - main (?!)
+
+[source,java]
+----
+public interface StringUtils {
+    default void print(String str) {
+        if (!isNull(str)) {
+            System.out.println("MyData Print::" + str);
+        }
+    }
+
+    static boolean isNull(String str) {
+        System.out.println("Interface Null Check");
+
+        return str == null ? true : "".equals(str) ? true : false;
+    }
+
+    public static void main(String[] args) {
+        /**
+         * -_-"
+         */
+    }
+}
+----
+
+[.topic]
+== Interfejs LinkedList
+
+[.incremental]
+* Optymalny typ kolekcji z dostępem sekwencyjnym
+* Zoptymalizowany pod kątem operacji wstawiania i usuwania elementów ze środka
+* Wolne operacje swobodnego dostępu (np. pobrania elementu o wskazanym indeksie)
+
+[.topic.source]
+== Przykład kolekcji LinkedList
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        LinkedList<String> strings = new LinkedList<>(); // !
+
+        strings.add("A");
+        strings.add("B");
+        strings.add("C");
+
+        strings.addFirst("F");
+        strings.addLast("E");
+
+        strings.add("G");
+        strings.removeFirst();
+        strings.removeLst();
+
+        System.out.println(strings);
+    }
+}
+----
+
+[.topic]
+== Interfejs Queue
+
+[.incremental]
+* Kontener reprezentujący kolejkę jednokierunkową
+* FIFO - first-in, first-out
+* Typowa implementacja Queue - LinkedList
+* Interfejs ten zawiera dodatkowe metody dostępne za pomocą rzutowania w górę
+
+[.topic.source]
+== Przykład zastosowania kolejki Queue
+
+[source,java]
+----
+public class Main {
+    public static void main(String[] args) {
+        Queue<Integer> queue = new LinkedList<Integer>();
+        Random rand = new Random(47);
+
+        for (int i = 0; i < 10; i++) {
+            queue.offer(rand.nextInt(i + 10));
+        }
+
+        System.out.print(queue);
+
+        while (queue.peek() != null) {
+            System.out.print(queue.remove() + " - ");
+        }
+
+        System.out.print(queue);
+    }
+}
+----
+
+[.topic]
+== Metody interfejsu Queue
+
+[.incremental]
+* *offer()* - wstawia element na koniec kolejki (jeśli to możliwe)
+* *peek()* - zwraca element z przodu bez usuwania lub *false*
+* *element()* - zwraca element z przodu bez usuwania lub rzuca NoSuchElementException
+
+[.topic]
+== Metody interfejsu Queue
+
+[.incremental]
+* *pool()* - usuwa i zwraca element z czoła kolejki lub *false*
+* *remove()* - usuwa i zwraca element z czoła kolejki lub rzuca NoSuchElementException
+
+[.topic]
+== Porównywanie obiektów
+
+[.incremental]
+* Do porównywania dwóch obiektów służą dwa interfejsy - Comparator oraz Comparable
+* Interfejs *Comparator* służy do implementacji logiki *porównywania obiektów dwóch typów*
+* Interfejs *Comparable* służy do implementacji logiki *porównywania obiektów tego samego typu*
+
+[.topic]
+== Wartości zwracane przez metody compare() i compareTo()
+
+[.incremental]
+* *0* - jeśli obiekty są sobie równe
+* *wartość pozytywna* - jeśli obiekt pierwszy jest "większy" od obiektu drugiego
+* *wartość negatywna* - jeśli obiekt pierwszy jest "mniejszy" od obiektu drugiego
+
+[.topic.source]
+== Przykładowa klasa Student
+
+[source,java]
+----
+public class Student {
+    private String name;
+    private int grade;
+
+    public String getName() {
+       return name;
+    }
+
+    public void setName(String name) {
+       this.name = name;
+    }
+
+    public int getGrade() {
+       return grade;
+    }
+
+    public void setGrade(int grade) {
+       this.grade = grade;
+    }
+
+    @Override
+    public String toString() {
+       return "[name=" + this.name + ", grade=" + this.grade + "]";
+    }
+}
+----
+
+[.topic.source]
+== Porównanie stopni
+
+[source,java]
+----
+class StudentGradeComparator implements Comparator<Student> {
+    @Override
+    public int compare(Student s1, Student s2) {
+        return s2.getGrade() - s1.getGrade();
+    }
+}
+----
+
+[.topic.source]
+== Porównanie nazw
+
+[source,java]
+----
+class StudentNameComparator implements Comparator<Student> {
+    @Override
+    public int compare(Student s1, Student s2) {
+        return s1.getName().compareTo(s2.getName());
+    }
+}
+----
+
+[.topic.source]
+== Przygotowanie danych
+
+[source,java]
+----
+public class ComparatorExample {
+	public static void main(String args[]) {
+		Student student[] = new Student[3];
+
+		student[0] = new Student();
+		student[0].setName("Nick");
+		student[0].setGrade(19);
+
+		student[1] = new Student();
+		student[1].setName("Helen");
+		student[1].setGrade(12);
+
+		student[2] = new Student();
+		student[2].setName("Ross");
+		student[2].setGrade(16);
+
+		// ...
+    }
+}
+----
+
+[.topic.source]
+== Sortowanie po stopniach
+
+[source,java]
+----
+public class ComparatorExample {
+	public static void main(String args[]) {
+	    // ...
+
+        Arrays.sort(student, new StudentGradeComparator());
+		System.out
+				.println("Order of students after sorting by student grade is");
+
+		for (int i = 0; i < student.length; i++) {
+			System.out.println(student[i].getName() + "\t"
+					+ student[i].getGrade());
+		}
+    }
+}
+----
+
+[.topic.source]
+== Sortowanie po nazwach
+
+[source,java]
+----
+public class ComparatorExample {
+	public static void main(String args[]) {
+	    // ...
+
+        Arrays.sort(student, new StudentNameComparator());
+		System.out
+				.println("Order of students after sorting by student name is");
+
+		for (int i = 0; i < student.length; i++) {
+			System.out.println(student[i].getName() + "\t"
+					+ student[i].getGrade());
+		}
+    }
+}
+----
+
+[.topic.source]
+== Porównanie obiektu klasy Student z innym
+
+[source,java]
+----
+public class Student implements Comparable<Student> {
+    // ...
+
+    @Override
+    public int compareTo(Student s) {
+        return ???;
+    }
+}
+----
+
+== ! questions
+image::any-questions.jpg[caption="Pytania?", crole="invert", role="stretch-x"]
